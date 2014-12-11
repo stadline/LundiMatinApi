@@ -1,0 +1,31 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 header">
+                <img src="{{ asset('bundles/stadlinefront/img/stadline.png') }}" alt="logo stadline" />
+                <h1>
+                    {% block header_title %}{% endblock %}
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-10">
+                {% block content %}{% endblock %}
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/stadlinefront/lib/bootstrap/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/stadlinefront/lib/bootstrap/css/bootstrap-theme.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/stadlinefront/css/style.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('bundles/stadlinefront/lib/jquery/jquery-1.11.1.min.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,14 @@
+div.container-fluid {
+
+}
+
+div.header {
+    background: url('../img/bk_main_wrapper_home_cropped.png') 0 0 repeat-x;
+    margin-bottom: 20px;
+}
+div.header * {
+    display: inline-block;
+}
+div.header h1 {
+    margin-left: 30px;
+}

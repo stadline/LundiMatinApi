@@ -1,0 +1,9 @@
+services:
+    stadline_front.soap_service:
+        class: Stadline\FrontBundle\Service\SoapService
+        arguments:
+            - %api_url%
+            - %api_ref_factures%
+            - %api_username%
+            - %api_password%
+

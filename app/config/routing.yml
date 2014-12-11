@@ -1,0 +1,6 @@
+stadline_front:
+    resource: "@StadlineFrontBundle/Resources/config/routing.yml"
+    prefix:   /
+
+
+

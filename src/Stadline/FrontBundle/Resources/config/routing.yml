@@ -1,0 +1,7 @@
+stadline_front_factures:
+    path:     /factures/{hashedRef}
+    defaults: { _controller: StadlineFrontBundle:Default:factures }
+
+stadline_front_hash:
+    path:     /hash/{refContact}
+    defaults: { _controller: StadlineFrontBundle:Default:hash }
