@@ -10,8 +10,7 @@ class DefaultController extends Controller
     public function hashAction($refContact)
     {
         $salt = $this->container->getParameter('secret');
-        $allowCreate = $this->getSoapService()->hasFacturesByRefClient($refContact, 1);
-        $hashedRef = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->encrypt($refContact, $salt, $allowCreate);
+        $hashedRef = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->encrypt($refContact, $salt, true);
         if ($hashedRef === false) {
             throw new AuthenticationException('Could not find User');
         }
@@ -24,18 +23,24 @@ class DefaultController extends Controller
     public function facturesAction($hashedRef)
     {
         $ref = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->decrypt($hashedRef);
+        
         if ($ref === false) {
             throw new AuthenticationException('Could not find User');
         }
 
-//        $soapService = $this->getSoapService();
-//        $factures = $soapService->getFacturesByRefClient($ref, 1); // 'C-000000-00033'
-//
-//        echo '<pre>';var_dump($factures);die();
+        $soapService = $this->getSoapService();
+        $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
 
+        var_dump($soapService->getDocument($factures[0]['ref_doc']));
+        die();
         return $this->render('StadlineFrontBundle:Default:index.html.twig', array(
-            'factures' => $this->facturesTest
+            'factures' => $factures
         ));
+    }
+    
+    public function getPdf($docRef)
+    {
+        die('TODO');
     }
 
     private function getSoapService()
