@@ -20,12 +20,12 @@
                 <tbody>
                     {% for f in factures %}
                         <tr>
-                            <td>{{ f.ref }}</td>
-                            <td>{{ f.lib_etat_doc }}</td>
-                            <td>{{ f.date_doc }}</td>
-                            <td style="text-align: right;">{{ f.montant_ttc }} &euro;</td>
+                            <td>{{ f.ref_doc }}</td>
+                            <td>{{ f.etat_doc }}</td>
+                            <td>{{ f.date_creation_doc }}</td>
+                            <td style="text-align: right;">{{ f.__detail.montant_ttc }} &euro;</td>
                             <td>
-                                <a href="#" class="btn btn-info btn-small">
+                                <a href="{{url("stadline_front_facture_pdf", { "refDoc" : f.ref_doc })}}" class="btn btn-info btn-small">
                                     <i class="glyphicon glyphicon-download-alt"></i>
                                 </a>
                             </td>

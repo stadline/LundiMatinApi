@@ -81,6 +81,7 @@ class SoapService
             )));
             
             $datas = json_decode($response['data'], true);
+            
             return $datas; 
             
         } catch (\SoapFault $e) {
@@ -112,6 +113,25 @@ class SoapService
             
             $data = json_decode($response['data'], true);
             
+        } catch (\SoapFault $e) {
+            return false;
+        }
+        
+        return array_pop($data);
+    }
+    
+    public function getPdfDocument($refDoc)
+    {
+       try {
+            
+            $client = $this->getClient();
+            $response = $client->get_document_pdf($this->do_argument(array(
+                'ref_doc' => $refDoc
+            )));
+            
+            $data = json_decode($response['data'], true);
+            
+            die();
         } catch (\SoapFault $e) {
             return false;
         }

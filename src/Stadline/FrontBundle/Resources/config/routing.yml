@@ -1,3 +1,7 @@
+stadline_front_facture_pdf:
+    path:     /facture/pdf/{refDoc}
+    defaults: { _controller: StadlineFrontBundle:Default:pdf }
+    
 stadline_front_factures:
     path:     /factures/{hashedRef}
     defaults: { _controller: StadlineFrontBundle:Default:factures }

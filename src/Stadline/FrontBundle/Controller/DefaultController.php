@@ -30,17 +30,24 @@ class DefaultController extends Controller
 
         $soapService = $this->getSoapService();
         $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
-
-        var_dump($soapService->getDocument($factures[0]['ref_doc']));
-        die();
+        
+        foreach($factures as $index => $facture) {
+            $factures[$index]['__detail'] = $soapService->getDocument($facture['ref_doc']);
+        }
+        
+//        var_dump($factures);
+//        die();
+        
         return $this->render('StadlineFrontBundle:Default:index.html.twig', array(
             'factures' => $factures
         ));
     }
     
-    public function getPdf($docRef)
+    public function pdfAction($docRef)
     {
-        die('TODO');
+        $soapService = $this->getSoapService();
+        $factures = $soapService->getPdfDocument($refDoc); // 'C-000000-00033'
+        
     }
 
     private function getSoapService()
