@@ -45,7 +45,7 @@ class DefaultController extends Controller
 
 
 
-
+        
         return $this->render('StadlineFrontBundle:Default:index.html.twig', array(
             'factures' => $displayfactures,
             'nom_contact' => $nomContact
