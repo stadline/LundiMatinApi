@@ -1,27 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nico
- * Date: 11/12/14
- * Time: 15:33
- */
 
 namespace Stadline\FrontBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Contact
- * @package Stadline\FrontBundle\Entity
+ * Contact
+ *
+ * @ORM\Table()
  * @ORM\Entity(repositoryClass="Stadline\FrontBundle\Repository\ContactRepository")
- * @ORM\Table(name="Contact")
  */
 class Contact
 {
     /**
-     * @var int
+     * @var integer
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -30,19 +24,22 @@ class Contact
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="ref", type="string", length=255)
      */
     private $ref;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="hashedRef", type="string", length=255)
      */
     private $hashedRef;
 
+
     /**
-     * @return int
+     * Get id
+     *
+     * @return integer 
      */
     public function getId()
     {
@@ -50,7 +47,22 @@ class Contact
     }
 
     /**
-     * @return string
+     * Set ref
+     *
+     * @param string $ref
+     * @return Contact
+     */
+    public function setRef($ref)
+    {
+        $this->ref = $ref;
+
+        return $this;
+    }
+
+    /**
+     * Get ref
+     *
+     * @return string 
      */
     public function getRef()
     {
@@ -58,30 +70,25 @@ class Contact
     }
 
     /**
-     * @param $ref
-     * @return $this
+     * Set hashedRef
+     *
+     * @param string $hashedRef
+     * @return Contact
      */
-    public function setRef($ref)
+    public function setHashedRef($hashedRef)
     {
-        $this->ref = $ref;
+        $this->hashedRef = $hashedRef;
+
         return $this;
     }
 
     /**
-     * @return string
+     * Get hashedRef
+     *
+     * @return string 
      */
     public function getHashedRef()
     {
         return $this->hashedRef;
     }
-
-    /**
-     * @param $hashedRef
-     * @return $this
-     */
-    public function setHashedRef($hashedRef)
-    {
-        $this->hashedRef = $hashedRef;
-        return $this;
-    }
-} 
+}

@@ -7,6 +7,11 @@
 {% block content %}
     <div class="row">
         <div class="col-lg-12">
+
+                <p style="font-size: large"> {{ nom_contact }} </p>
+
+
+
             <table id="tableFactures" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -21,9 +26,26 @@
                     {% for f in factures %}
                         <tr>
                             <td>{{ f.ref_doc }}</td>
-                            <td>{{ f.etat_doc }}</td>
-                            <td>{{ f.date_creation_doc }}</td>
-                            <td style="text-align: right;">{{ f.__detail.montant_ttc }} &euro;</td>
+                            <td>{% if f.etat_doc == 19 %}
+                                    <p> Acquittée </p>
+                                {%  elseif f.etat_doc == 18 %}
+                                    <p>à régler</p>
+                                {%  elseif f.etat_doc == 17 %}
+                                    <p>Annulée</p>
+                                {%  elseif f.etat_doc == 16 %}
+                                    <p>en Saisie</p>
+                                {% else %}
+                                    {{  f.etat_doc }}
+                                {%  endif %}
+                            </td>
+                            <td> {{ f.date_creation_doc }}</td>
+                            <td style="text-align: right;">
+                                {% if f.__detail.montant_ttc is not defined %}
+                                {{ 'NUL' }}
+                                {% else %}
+                                    {{ f.__detail.montant_ttc }}&euro;
+                                {% endif %}
+                            </td>
                             <td>
                                 <a href="{{url("stadline_front_facture_pdf", { "refDoc" : f.ref_doc })}}" class="btn btn-info btn-small">
                                     <i class="glyphicon glyphicon-download-alt"></i>

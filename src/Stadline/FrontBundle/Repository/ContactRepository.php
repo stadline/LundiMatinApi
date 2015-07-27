@@ -19,25 +19,25 @@ class ContactRepository extends EntityRepository
 // <editor-fold desc="cryptage area">
     private $round = 1000;
 
-    public function encrypt($ref, $key, $allowCreate = false) // TODO: verif fonctionnement
+    public function encrypt($ref, $key, $allowCreate = false)
     {
         /** @var EntityManager $em */
         $em = $this->getEntityManager();
         /** @var Contact $user */
         $user = $this->findOneBy(array('ref' => $ref));
 
+        // si jai trouvé mle client dans ma base
         if (!is_null($user)) {
             if ($user instanceof Contact) {
                 return $user->getHashedRef();
-            } else {
-                return false;
             }
         }
 
         if ($allowCreate === true) {
             $user = new Contact();
             $user->setRef($ref);
-            $hashedRef = crypt($ref, sprintf('$6$%d$%s', $this->round, $key));
+
+            $hashedRef = substr(md5($ref.time().rand(0,10000)),0, 10);
             $user->setHashedRef($hashedRef);
 
             $em->persist($user);

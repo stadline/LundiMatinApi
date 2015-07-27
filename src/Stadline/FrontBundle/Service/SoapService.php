@@ -12,6 +12,7 @@ use SoapClient;
 use SoapHeader;
 use Stadline\FrontBundle\Entity\SoapHeaderUsernameToken;
 use stdClass;
+use Symfony\Component\HttpFoundation\Response;
 
 class SoapService
 {
@@ -75,11 +76,11 @@ class SoapService
     public function getAllFactures()
     {
         try {
-            
+
             $client = $this->getClient();
             $response = $client->getList($this->do_argument(array(
             )));
-            
+
             $datas = json_decode($response['data'], true);
             
             return $datas; 
@@ -88,10 +89,12 @@ class SoapService
             return false;
         }
     }
+
+
     
     public function getFacturesByRefClient($refClient)
     {
-        $allInvoices = $this->getAllFactures();
+        $allInvoices = $this->getALLFactures();
         
         $collection = new \Doctrine\Common\Collections\ArrayCollection($allInvoices);
         
@@ -126,17 +129,19 @@ class SoapService
             
             $client = $this->getClient();
             $response = $client->get_document_pdf($this->do_argument(array(
-                'ref_doc' => $refDoc
+                'ref_doc' => $refDoc,
+                'code_model_pdf' => "doc_fac_standard",
             )));
-            
-            $data = json_decode($response['data'], true);
-            
-            die();
+
+            $binaire = $response['data']["document"];
+
+           return $binaire;
+
         } catch (\SoapFault $e) {
             return false;
         }
         
-        return $data;
+        return $response;
     }
 
 
@@ -145,5 +150,23 @@ class SoapService
         $factures = $this->getFacturesByRefClient($refContact, $idCanal);
         if ($factures === false) return false;
         return isset($factures[0]); // at least one
+    }
+
+
+    public function getRefClientInformation($refClient) {
+        try {
+
+            $client = $this->getClient();
+            $response = $client->getExtraitCompte($this->do_argument(array(
+                'ref_client' => $refClient,
+            )));
+
+            $datas = json_decode($response['data'], true);
+
+            return $datas;
+
+        } catch (\SoapFault $e) {
+            return false;
+        }
     }
 } 
