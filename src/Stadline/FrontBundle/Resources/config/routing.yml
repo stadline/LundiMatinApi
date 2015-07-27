@@ -8,4 +8,8 @@ stadline_front_factures:
 
 stadline_front_hash:
     path:     /hash/{refContact}
-    defaults: { _controller: StadlineFrontBundle:Default:hash }
+    defaults: { _controller: StadlineFrontBundle:Default:hash, refContact:1 }
+
+stadline_front_state:
+    path:    /factures/{hashedRef}/{state}
+    defaults: { _controller: StadlineFrontBundle:Default:state }
