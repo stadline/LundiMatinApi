@@ -25,7 +25,8 @@ class ContactRepository extends EntityRepository
         $em = $this->getEntityManager();
         /** @var Contact $user */
         $user = $this->findOneBy(array('ref' => $ref));
-
+        //var_dump($ref);
+        //die();
         // si jai trouvé mle client dans ma base
         if (!is_null($user)) {
             if ($user instanceof Contact) {
