@@ -23,7 +23,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set compt = -1 %}
                     {% for f in factures %}
+                        {% set compt = compt + 1 %}
                         <tr>
                             <td>{{ f.ref_doc }}</td>
                             <td>{% if f.etat_doc == 19 %}
@@ -46,12 +48,16 @@
                                     {{ f.__detail.montant_ttc }}&euro;
                                 {% endif %}
                             </td>
+
+
                             <td>
-                                <a href="{{url("stadline_front_facture_pdf", { "refDoc" : f.ref_doc })}}" class="btn btn-info btn-small">
+                                <a href="{{url("stadline_front_facture_pdf", { "refDocEncrypt" : refDocEncrypt[compt] })}}" class="btn btn-info btn-small">
                                     <i class="glyphicon glyphicon-download-alt"></i>
                                 </a>
                             </td>
+
                         </tr>
+
                     {% endfor %}
                 </tbody>
             </table>

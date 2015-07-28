@@ -1,5 +1,5 @@
 stadline_front_facture_pdf:
-    path:     /facture/pdf/{refDoc}
+    path:     /facture/pdf/{refDocEncrypt}
     defaults: { _controller: StadlineFrontBundle:Default:pdf }
     
 stadline_front_factures:
