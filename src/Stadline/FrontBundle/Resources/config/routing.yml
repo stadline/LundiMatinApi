@@ -14,6 +14,10 @@ stadline_front_state:
     path:    /factures/{hashedRef}/{state}
     defaults: { _controller: StadlineFrontBundle:Default:state }
 
+stadline_front_getAffaire:
+    path:    /maj/factures/{affaire}
+    defaults: { _controller: StadlineFrontBundle:Default:getAffaire }
+
 stadline_front_test_sugar:
     path:     /testsugar
     defaults: { _controller: StadlineFrontBundle:Default:testSugar }

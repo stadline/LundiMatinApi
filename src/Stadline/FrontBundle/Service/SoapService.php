@@ -97,14 +97,30 @@ class SoapService
         $allInvoices = $this->getALLFactures();
         
         $collection = new \Doctrine\Common\Collections\ArrayCollection($allInvoices);
-        
+
         $collection = $collection->filter(function ($elm) use ($refClient) {
+
             return $elm['ref_contact'] == $refClient;
+
         });
         
         return array_values($collection->toArray());
     }
-    
+
+    public function getFacturesByRef($refDoc)
+    {
+        $allInvoices = $this->getAllFactures();
+
+        $collection = new \Doctrine\Common\Collections\ArrayCollection($allInvoices);
+
+        $collection = $collection->filter(function ($elm) use ($refDoc) {
+
+            return $elm['ref_doc'] == $refDoc;
+        });
+
+        return array_values($collection->toArray());
+    }
+
     public function getDocument($refDoc)
     {
        try {
@@ -132,6 +148,7 @@ class SoapService
                 'ref_doc' => $refDoc,
                 'code_model_pdf' => "doc_fac_standard",
             )));
+
 
             $binaire = $response['data']["document"];
 

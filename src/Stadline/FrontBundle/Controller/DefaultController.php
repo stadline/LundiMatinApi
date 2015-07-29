@@ -34,6 +34,7 @@ class DefaultController extends Controller
 
         $soapService = $this->getSoapService();
         $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
+
         $displayfactures = [];
         $refDocEncrypt = [];
         foreach ($factures as $index => $facture) {
@@ -45,15 +46,7 @@ class DefaultController extends Controller
                 $refDoc = $factures[$index]["ref_doc"];
                 $refDocEncrypt[] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
             }
-
-
-
-
-
-
-
         }
-
 
 
         return $this->render('StadlineFrontBundle:Default:index.html.twig', array(
@@ -212,5 +205,42 @@ class DefaultController extends Controller
         $sugarClient = $this->get('stadline_sugar_crm_client');
         var_dump($sugarClient->getAccounts());
         die();
+    }
+
+     public function getAffaireAction($affaire)
+    {
+
+        //$tableau['etat_doc'] = 19;
+        //$tableau['ref_doc'] =
+        $soapService = $this->getSoapService();
+        $factures = $soapService->getFacturesByRef($affaire);
+
+        var_dump($factures);
+        die();
+
+        // comparer les infos de Lundi matin et celles recuperées
+        if ($factures['date_creation_doc'] =! $affaire['date_creation_doc'])
+        {
+            $message_erreur = 'date de creation incorrect';
+        }
+        elseif ($factures['montant_ttc'] =! $affaire['montant_ttc'])
+        {
+            $message_erreur = 'montant ttc incorrect';
+        }
+
+
+
+        if($factures['etat_doc'] == 19) // si Acquittée
+        {
+            $affaire['etat_doc'] = 'payée';
+            // creer une page de log
+        }
+
+        elseif ($factures['etat_doc'] == 18) // si à regler
+        {
+            $affaire['etat_doc'] = 'facturée';
+            // creer une page de log
+        }
+
     }
 }
