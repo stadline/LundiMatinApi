@@ -13,8 +13,9 @@ use SoapHeader;
 use Stadline\FrontBundle\Entity\SoapHeaderUsernameToken;
 use stdClass;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-class SoapService
+class SoapService extends ContainerAwareCommand
 {
     /** @var SoapClient $client */
     private $client;

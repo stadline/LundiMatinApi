@@ -1,0 +1,4 @@
+services:
+    stadline_tasks.log:
+        class: Stadline\TasksBundle\log\pagelog
+        arguments: [@service_container]

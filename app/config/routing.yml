@@ -1,3 +1,9 @@
+stadline_tasks:
+    resource: "@StadlineTasksBundle/Resources/config/routing.yml"
+    prefix:   /
+
+
+
 stadline_front:
     resource: "@StadlineFrontBundle/Resources/config/routing.yml"
     prefix:   /

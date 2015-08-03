@@ -35,6 +35,7 @@ class DefaultController extends Controller
         $soapService = $this->getSoapService();
         $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
 
+
         $displayfactures = [];
         $refDocEncrypt = [];
         foreach ($factures as $index => $facture) {
@@ -46,6 +47,8 @@ class DefaultController extends Controller
                 $refDoc = $factures[$index]["ref_doc"];
                 $refDocEncrypt[] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
             }
+
+
         }
 
 
