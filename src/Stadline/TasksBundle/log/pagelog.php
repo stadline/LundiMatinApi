@@ -68,4 +68,33 @@ class pagelog extends controller
 
     }
 
+    function getAffaire($montantHT,$Sugar)
+    {
+        $Facture = [];
+
+        foreach($Sugar as $sugar)
+        {
+            if($sugar['montant_ht'] == $montantHT)
+                $Facture = $sugar;
+        }
+
+        if(!isset($Facture[0]))
+        {
+            $message = 'alert aucune facture trouvée';
+            return $message;
+        }
+
+        elseif(isset($Facture[1]))
+        {
+            $message = 'alert plusieurs factures trouvées';
+            return $message;
+        }
+
+        else
+        {
+            return $Facture;
+        }
+    }
+
+
 }

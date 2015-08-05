@@ -17,6 +17,7 @@ class DefaultController extends Controller
         $client = $this->get('stadline_tasks.log');
         $data = $client->getAlldata();
 
+
         foreach ($data as $data)
         {
 
@@ -26,7 +27,7 @@ class DefaultController extends Controller
             $maj[] = $data->getMaj();
         }
 
-
+        
         return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
             'RefAffaire' => $RefAffaire,
             'date' => $date,
@@ -34,4 +35,33 @@ class DefaultController extends Controller
             'maj' => $maj
         ));
     }
+
+
+    public  function PageLogErrorAction()
+    {
+        $client = $this->get('stadline_tasks.log');
+        $data = $client->getAlldata();
+
+
+        foreach ($data as $data)
+        {
+            if($data->getErreur() == 'date de creation incorrect' or $data->getErreur() == 'montant ttc incorrect')
+            {
+                $RefAffaire[] = $data->getRefAffaire();
+                $date[] = $data->getDate();
+                $erreur[] = $data->getErreur();
+                $maj[] = $data->getMaj();
+            }
+
+        }
+
+
+        return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
+            'date' => $date,
+            'RefAffaire' => $RefAffaire,
+            'erreur' => $erreur,
+            'maj' => $maj
+        ));
+    }
+
 }

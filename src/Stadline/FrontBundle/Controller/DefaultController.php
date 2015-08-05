@@ -36,6 +36,8 @@ class DefaultController extends Controller
         $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
 
 
+
+
         $displayfactures = [];
         $refDocEncrypt = [];
         foreach ($factures as $index => $facture) {
@@ -50,6 +52,7 @@ class DefaultController extends Controller
 
 
         }
+
 
 
         return $this->render('StadlineFrontBundle:Default:index.html.twig', array(
@@ -218,8 +221,7 @@ class DefaultController extends Controller
         $soapService = $this->getSoapService();
         $factures = $soapService->getFacturesByRef($affaire);
 
-        var_dump($factures);
-        die();
+
 
         // comparer les infos de Lundi matin et celles recuperées
         if ($factures['date_creation_doc'] =! $affaire['date_creation_doc'])

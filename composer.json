@@ -19,7 +19,11 @@
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "stadline/sugar-crm-bundle": "dev-master",
-        "stadline/sugarrestapi": "dev-master"
+        "stadline/sugarrestapi": "dev-master",
+        "doctrine/migrations": "^1.0",
+        "doctrine/doctrine-migrations-bundle": "^1.0"
+
+        
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

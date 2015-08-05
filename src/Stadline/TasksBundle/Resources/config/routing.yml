@@ -1,3 +1,7 @@
 stadline_tasks_page_log:
     path:     /log
     defaults: { _controller: StadlineTasksBundle:Default:PageLog}
+
+stadline_tasks_page_log_error:
+    path:    /log/error
+    defaults: { _controller: StadlineTasksBundle:Default:PageLogError}

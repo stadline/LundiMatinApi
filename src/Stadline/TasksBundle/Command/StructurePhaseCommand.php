@@ -46,19 +46,26 @@ class StructurePhaseCommand extends ContainerAwareCommand
     {
 
         $affaire = $input->getArgument('affaire');
-        //$date_creation_affaire = $input->getArgument('date_creation_affaire');
-        //$montant_ttc_affaire = $input->getArgument('montant_ttc_affaire');
-        $date_creation_affaire = "2015-07-13 10:58:56";
-        $montant_ttc_affaire = '2160';
+
+        $date_creation_affaire = "2015-05-05 11:53:16";
+        $montant_ttc_affaire = '8760';
+        $etat_affaire = 'en attente';
+
+
+
+
+
         $container = $this->getContainer();
         $client = $container->get('stadline_front.soap_service');
         $factures = $client->getFacturesByRef($affaire);
-        $date_maj = array(date("d/m/Y"),date("H:i"));
+
+        $date_maj = date('Y-m-d H:i:s');
         $mise_a_jour = 'aucune mise à jour effectuée';
         $message_erreur = 'aucune erreur';
+
         foreach ($factures as $index => $facture)
         {
-            $factures[$index]['__detail'] = $client->getDocument($facture['ref_doc']);
+           $factures[$index]['__detail'] = $client->getDocument($facture['ref_doc']);
             $montant_ttc = $factures[$index]['__detail']['montant_ttc'];
             $date_creation = $facture['date_creation_doc'];
             $etat_doc = $facture['etat_doc'];
@@ -80,27 +87,29 @@ class StructurePhaseCommand extends ContainerAwareCommand
 
         }
 
+        if($message_erreur == 'aucune erreur'){
 
-        if($etat_doc == 19) // si Acquittée
-        {
-            $etat_doc  = 'payée';
-            // creer une page de log
+            if($etat_doc != $etat_affaire and $etat_doc == 19) // si Acquittée
+            {
+                $etat_affaire  = 'payée';
+                $mise_a_jour = 'mise à jour effectuée';
+            }
+
+            elseif ($etat_doc != $etat_affaire and $etat_doc  == 18) // si à regler
+            {
+                $etat_affaire = 'facturée';
+                $mise_a_jour = 'mise à jour effectuée';
+            }
         }
 
-        elseif ($etat_doc  == 18) // si à regler
-        {
-            $etat_doc  = 'facturée';
-            // creer une page de log
-        }
+            $client = $container->get('stadline_tasks.log');
 
 
-        $client = $container->get('stadline_tasks.log');
+            $client->getValue($affaire,$date_maj,$message_erreur,$mise_a_jour);
 
 
-        $client->getValue($affaire,$date_maj,$message_erreur,$mise_a_jour);
-
-
-        $data = $client->getAlldata();
+            $data = $client->getAlldata();
+            var_dump($etat_affaire);
 
 
 

@@ -83,7 +83,7 @@ class SoapService extends ContainerAwareCommand
             )));
 
             $datas = json_decode($response['data'], true);
-            
+
             return $datas; 
             
         } catch (\SoapFault $e) {
@@ -96,6 +96,7 @@ class SoapService extends ContainerAwareCommand
     public function getFacturesByRefClient($refClient)
     {
         $allInvoices = $this->getALLFactures();
+
         
         $collection = new \Doctrine\Common\Collections\ArrayCollection($allInvoices);
 
@@ -127,9 +128,11 @@ class SoapService extends ContainerAwareCommand
        try {
             
             $client = $this->getClient();
+
             $response = $client->getContent($this->do_argument(array(
                 'ref_doc' => $refDoc
             )));
+
             
             $data = json_decode($response['data'], true);
             
