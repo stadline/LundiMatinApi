@@ -104,7 +104,7 @@ class DefaultController extends Controller
         $ref = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->decrypt($hashedRef);
 
         if ($ref === false) {
-            throw new AuthenticationException('Could not find User');
+            throw new AuthenticationException('Could not find Client');
         }
 
         $soapService = $this->getSoapService();
