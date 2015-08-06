@@ -32,12 +32,13 @@ class AssignFactureCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $input = array();
+        $Sugar = array();
 
         $ListeAffaires= [];
         $Affaires = [];
+        $montant_ht = '1000';
 
-        foreach($input as $data )
+        foreach($Sugar as $data )
         {
             if($data['phase_de_vente'] != "payé" or $data['phase_de_vente'] != "perdu")
             {
@@ -73,7 +74,8 @@ class AssignFactureCommand extends ContainerAwareCommand
         //Apres avoir fait le diffrentiel on obtient une liste de factures qui ne sont pas dans les affaires de Sugar , on l'appelle ici Liste
 
         $client = $container->get('stadline_tasks.log');
-        $facture = $client->getAffaire();
+        $facture = $client->getAffaire($montant_ht,$Affaires);
+        $message_erreur = $client->verification();
 
     }
 }

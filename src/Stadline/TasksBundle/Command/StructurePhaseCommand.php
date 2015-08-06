@@ -63,6 +63,7 @@ class StructurePhaseCommand extends ContainerAwareCommand
         $mise_a_jour = 'aucune mise à jour effectuée';
         $message_erreur = 'aucune erreur';
 
+
         foreach ($factures as $index => $facture)
         {
            $factures[$index]['__detail'] = $client->getDocument($facture['ref_doc']);
@@ -72,20 +73,10 @@ class StructurePhaseCommand extends ContainerAwareCommand
 
         }
 
+
         // comparer les infos de LundiMatin et celles recuperées
-        if ($date_creation != $date_creation_affaire)
-        {
-            $message_erreur = 'date de creation incorrect';
-             echo $message_erreur;
-
-        }
-
-        elseif ($montant_ttc != $montant_ttc_affaire)
-        {
-            $message_erreur = 'montant ttc incorrect';
-            echo $message_erreur;
-
-        }
+        $client = $container->get('stadline_tasks.log');
+        $message_erreur = $client->verification($date_creation,$date_creation_affaire,$montant_ttc,$montant_ttc_affaire);
 
         if($message_erreur == 'aucune erreur'){
 
@@ -102,7 +93,7 @@ class StructurePhaseCommand extends ContainerAwareCommand
             }
         }
 
-            $client = $container->get('stadline_tasks.log');
+
 
 
             $client->getValue($affaire,$date_maj,$message_erreur,$mise_a_jour);

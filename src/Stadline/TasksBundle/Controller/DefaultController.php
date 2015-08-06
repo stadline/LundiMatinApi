@@ -27,7 +27,7 @@ class DefaultController extends Controller
             $maj[] = $data->getMaj();
         }
 
-        
+
         return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
             'RefAffaire' => $RefAffaire,
             'date' => $date,

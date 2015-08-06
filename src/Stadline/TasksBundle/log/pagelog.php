@@ -97,4 +97,23 @@ class pagelog extends controller
     }
 
 
+    function verification($date_creation,$date_creation_affaire,$montant_ttc,$montant_ttc_affaire)
+    {
+        $message_erreur = 'aucune erreur';
+        if ($date_creation != $date_creation_affaire)
+        {
+            $message_erreur = 'date de creation incorrect';
+            echo $message_erreur;
+
+        }
+
+        elseif ($montant_ttc != $montant_ttc_affaire)
+        {
+            $message_erreur = 'montant ttc incorrect';
+            echo $message_erreur;
+
+        }
+
+        return $message_erreur;
+    }
 }
