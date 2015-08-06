@@ -71,3 +71,9 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+# Sugar CRM
+stadline_sugar_crm:
+    base_url: %stadline_sugar_crm.base_url%
+    username: %stadline_sugar_crm.username%
+    password: %stadline_sugar_crm.password%

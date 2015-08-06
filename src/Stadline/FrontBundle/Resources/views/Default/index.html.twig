@@ -43,7 +43,7 @@
                             <td> {{ f.date_creation_doc }}</td>
                             <td style="text-align: right;">
                                 {% if f.__detail.montant_ttc is not defined %}
-                                {{ 'NUL' }}
+                                {{ '-' }}
                                 {% else %}
                                     {{ f.__detail.montant_ttc }}&euro;
                                 {% endif %}

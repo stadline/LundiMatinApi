@@ -206,10 +206,11 @@ class DefaultController extends Controller
         )
     );
 
-
-
-
-
-
-
+    public function testSugarAction()
+    {
+        $affaires = array();
+        $sugarClient = $this->get('stadline_sugar_crm_client');
+        var_dump($sugarClient->getAccounts());
+        die();
+    }
 }

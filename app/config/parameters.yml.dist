@@ -19,7 +19,13 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret:            52bad80b51e9d33591125c979ed5cbc2
 
+    #LundiMatin
     api_username:       toto
     api_password:       toto
     api_url:            http://toto.fr
     api_ref_factures:   toto
+
+    #Sugar
+    stadline_sugar_crm.base_url: #
+    stadline_sugar_crm.username:    #
+    stadline_sugar_crm.password: #
