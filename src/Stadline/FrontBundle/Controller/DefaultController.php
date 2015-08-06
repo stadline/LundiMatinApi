@@ -135,4 +135,12 @@ class DefaultController extends Controller
             'montant_ttc' => '200'
         )
     );
+
+    public function testSugarAction()
+    {
+        $affaires = array();
+        $sugarClient = $this->get('stadline_sugar_crm_client');
+        var_dump($sugarClient->getAccounts());
+        die();
+    }
 }

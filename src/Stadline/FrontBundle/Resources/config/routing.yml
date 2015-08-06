@@ -9,3 +9,7 @@ stadline_front_factures:
 stadline_front_hash:
     path:     /hash/{refContact}
     defaults: { _controller: StadlineFrontBundle:Default:hash }
+
+stadline_front_test_sugar:
+    path:     /testsugar
+    defaults: { _controller: StadlineFrontBundle:Default:testSugar }

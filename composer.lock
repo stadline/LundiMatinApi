@@ -1318,12 +1318,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stadline/SugarCRMBundle.git",
-                "reference": "b034dbd4c77f9a825d9796ff93bbec01605eac74"
+                "reference": "d4a42849ecf214d4a8ed70ddb2d59d1941d939f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stadline/SugarCRMBundle/zipball/b034dbd4c77f9a825d9796ff93bbec01605eac74",
-                "reference": "b034dbd4c77f9a825d9796ff93bbec01605eac74",
+                "url": "https://api.github.com/repos/stadline/SugarCRMBundle/zipball/d4a42849ecf214d4a8ed70ddb2d59d1941d939f8",
+                "reference": "d4a42849ecf214d4a8ed70ddb2d59d1941d939f8",
                 "shasum": ""
             },
             "require": {
@@ -1355,7 +1355,7 @@
                 "source": "https://github.com/stadline/SugarCRMBundle/tree/master",
                 "issues": "https://github.com/stadline/SugarCRMBundle/issues"
             },
-            "time": "2015-08-06 11:19:25"
+            "time": "2015-08-06 11:43:29"
         },
         {
             "name": "stadline/sugarrestapi",
