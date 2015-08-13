@@ -7,3 +7,11 @@ services:
             - %api_username%
             - %api_password%
 
+
+    stadline_sugar_crm_client:
+             class: %stadline_sugar_crm.client.class%
+             arguments:
+                 - %stadline_sugar_crm.config.base_url%
+                 - %stadline_sugar_crm.config.username%
+                 - %stadline_sugar_crm.config.password%
+

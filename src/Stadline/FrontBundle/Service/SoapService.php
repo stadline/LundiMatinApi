@@ -190,4 +190,5 @@ class SoapService extends ContainerAwareCommand
             return false;
         }
     }
+
 } 

@@ -2,3 +2,11 @@ services:
     stadline_tasks.log:
         class: Stadline\TasksBundle\log\pagelog
         arguments: [@service_container]
+
+
+    stadline_sugar_crm_client:
+         class: %stadline_sugar_crm.client.class%
+         arguments:
+             - %stadline_sugar_crm.config.base_url%
+             - %stadline_sugar_crm.config.username%
+             - %stadline_sugar_crm.config.password%

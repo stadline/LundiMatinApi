@@ -207,13 +207,35 @@ class DefaultController extends Controller
 
     public function testSugarAction()
     {
-        $affaires = array();
+
         $sugarClient = $this->get('stadline_sugar_crm_client');
-        var_dump($sugarClient->getAccounts());
+
+        //$accounts = $sugarClient->getAccounts();
+        //$sugarClient->getOpportunities('1249b119-216a-c5f1-a10b-452a99501b77');
+        //var_dump($sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326')); //Client test
+        $affairetest = $sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326');
+
+
+        $affaires = [];
+        foreach ($affairetest as $value) {
+            if ($value->getSalesStage() != 'Closed Won' and $value->getSalesStage() != 'Closed Lost' and $value->getnumfact() == '') {
+                $affaires [] = $value;
+            }
+
+
+        }
+
+        var_dump($affaires);
         die();
+
     }
 
-     public function getAffaireAction($affaire)
+
+
+
+
+
+    public function getAffaireAction($affaire)
     {
 
         //$tableau['etat_doc'] = 19;

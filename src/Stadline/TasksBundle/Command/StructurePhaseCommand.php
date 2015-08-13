@@ -26,10 +26,8 @@ class StructurePhaseCommand extends ContainerAwareCommand
     {
         $this
             ->setName('Stadline:structurephase')
-            ->setDescription('Mettre à jour les factures')
-            ->addArgument('affaire', InputArgument::REQUIRED, 'la référence de facture')
-            ->addArgument('date_creation_affaire', InputArgument::REQUIRED, 'la date de creation de la facture')
-            ->addArgument('montant_ttc_affaire', InputArgument::REQUIRED, 'le montant de la facture');
+            ->setDescription('Mettre à jour les factures');
+
 
     }
 
@@ -44,6 +42,80 @@ class StructurePhaseCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+        $container = $this->getContainer();
+        $sugarClient = $container->get('stadline_sugar_crm_client');
+        $accounts = $sugarClient->getAccounts();
+        //var_dump($sugarClient->getOpportunities('1249b119-216a-c5f1-a10b-452a99501b77'));
+        //var_dump($sugarClient->getOpportunities('6c514565-295c-92ba-a9fa-52f9fd1a7ae5'));
+
+        //var_dump($accounts);
+
+
+        foreach($accounts as $value)
+        {
+            $data[] = $value->getid();
+        }
+
+        unset($data[5]);
+        $data = array_values($data); // $data contient les numero de clients
+        // on enleve le 7 77  qui ne sert à rien
+
+
+
+        foreach($data as $value) // on cherche à  obtenir les phase de vente pour chaque affaires
+        {
+            //var_dump($value);
+            $opportunities = $sugarClient->getOpportunities($value);// on recupere toutes les affaires
+            //var_dump($test);
+            if(count($opportunities) > 0 )
+            {
+                foreach($opportunities as $SalesStage)
+                {
+
+                    if($SalesStage->getSalesStage() != 'Closed Won' and $SalesStage->getSalesStage() != 'Closed Lost')
+                    {
+                        $affaires[] = $SalesStage;
+                    }
+
+                }
+            }
+
+        }
+        $affaire = []; // correspond au affaire non payé et non perdu
+
+        foreach($affaires as $value)
+        {
+            if($value->getnumfact() != '')
+            {
+                $affaire[] = $value;
+            }
+        }
+
+        // on recupere les factures de lundi matin correspondant au numero de facture des affaires dans sugar
+        $client = $container->get('stadline_front.soap_service');
+        $factures = $client->getFacturesByRef($affaire['numfact']);
+        var_dump($factures);
+        die();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         $affaire = $input->getArgument('affaire');
 
@@ -62,6 +134,7 @@ class StructurePhaseCommand extends ContainerAwareCommand
         $date_maj = date('Y-m-d H:i:s');
         $mise_a_jour = 'aucune mise à jour effectuée';
         $message_erreur = 'aucune erreur';
+
 
 
         foreach ($factures as $index => $facture)

@@ -116,4 +116,28 @@ class pagelog extends controller
 
         return $message_erreur;
     }
+
+
+
+    public function Sugar()
+    {
+
+        $sugarClient = $this->get('stadline_sugar_crm_client');
+        $accounts = $sugarClient->getAccounts();
+
+        $account = [];
+        foreach($accounts as $value)
+        {
+            $data[] = $value->getid();
+        }
+
+
+        foreach($data as $value)
+        {
+            $opportunities[] = $sugarClient->getOpportunities($value);
+        }
+
+
+        return $opportunities;
+    }
 }
