@@ -208,13 +208,17 @@ class DefaultController extends Controller
     public function testSugarAction()
     {
 
+
+
+
         $sugarClient = $this->get('stadline_sugar_crm_client');
+
 
         //$accounts = $sugarClient->getAccounts();
         //$sugarClient->getOpportunities('1249b119-216a-c5f1-a10b-452a99501b77');
         //var_dump($sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326')); //Client test
         $affairetest = $sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326');
-
+        $account = $sugarClient->getAccounts();
 
         $affaires = [];
         foreach ($affairetest as $value) {
@@ -225,49 +229,57 @@ class DefaultController extends Controller
 
         }
 
-        var_dump($affaires);
+        foreach($affaires as $value)
+        {
+
+            $idLMB[] = $value->getidLMB();
+        }
+        $idLMB = array_unique($idLMB);
+        $idLMB = array_values($idLMB);
+        $soapService = $this->getSoapService();
+        foreach($idLMB as $value)
+        {
+
+            $factures[] = $soapService->getFacturesByRefClient($value);
+        }
+
+        $soapService = $this->getSoapService();
+        foreach($factures[0] as $value) {
+            $facture[] = $soapService->getDocument($value['ref_doc']);
+
+        }
+
+
+        foreach($affaires as $data)
+
+        {
+            $tab = [];
+            foreach($facture as $value)
+            {
+
+                if($value['montant_ttc'] == $data->getamount())
+                {
+                    $tab[] = $value;
+
+                }
+            }
+            $finalfact[] = $tab;
+
+        }
+
+        foreach($finalfact as $key => $value)
+        {
+            if(isset($value[1]))
+            {
+                unset($finalfact[$key]);
+
+            }
+        }
+        $finalfact = array_values($finalfact);
+        var_dump($finalfact);
         die();
 
     }
 
 
-
-
-
-
-    public function getAffaireAction($affaire)
-    {
-
-        //$tableau['etat_doc'] = 19;
-        //$tableau['ref_doc'] =
-        $soapService = $this->getSoapService();
-        $factures = $soapService->getFacturesByRef($affaire);
-
-
-
-        // comparer les infos de Lundi matin et celles recuperées
-        if ($factures['date_creation_doc'] =! $affaire['date_creation_doc'])
-        {
-            $message_erreur = 'date de creation incorrect';
-        }
-        elseif ($factures['montant_ttc'] =! $affaire['montant_ttc'])
-        {
-            $message_erreur = 'montant ttc incorrect';
-        }
-
-
-
-        if($factures['etat_doc'] == 19) // si Acquittée
-        {
-            $affaire['etat_doc'] = 'payée';
-            // creer une page de log
-        }
-
-        elseif ($factures['etat_doc'] == 18) // si à regler
-        {
-            $affaire['etat_doc'] = 'facturée';
-            // creer une page de log
-        }
-
-    }
 }

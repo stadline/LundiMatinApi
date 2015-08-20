@@ -42,8 +42,7 @@ class AssignFactureCommand extends ContainerAwareCommand
         //var_dump($accounts);
 
 
-        foreach($accounts as $value)
-        {
+        foreach ($accounts as $value) {
             $data[] = $value->getid();
         }
 
@@ -52,19 +51,18 @@ class AssignFactureCommand extends ContainerAwareCommand
         // on enleve le 7 77  qui ne sert à rien
 
 
+        $valeurtest[] = '7aa3a0b2-ebb8-108e-1bc6-55c895a8e326';
 
-        foreach($data as $value) // on cherche à  obtenir les phase de vente pour chaque affaires
+
+        foreach ($valeurtest as $value) // on cherche à  obtenir les phase de vente pour chaque affaires
         {
-            //var_dump($value);
-            $opportunities = $sugarClient->getOpportunities($value);// on recupere toutes les affaires
-            //var_dump($test);
-            if(count($opportunities) > 0 )
-            {
-                foreach($opportunities as $SalesStage)
-                {
 
-                    if($SalesStage->getSalesStage() != 'Closed Won' and $SalesStage->getSalesStage() != 'Closed Lost')
-                    {
+            $opportunities = $sugarClient->getOpportunities($value);// on recupere toutes les affaires
+
+            if (count($opportunities) > 0) {
+                foreach ($opportunities as $SalesStage) {
+
+                    if ($SalesStage->getSalesStage() != 'Closed Won' and $SalesStage->getSalesStage() != 'Closed Lost') {
                         $affaires[] = $SalesStage;
                     }
 
@@ -72,99 +70,68 @@ class AssignFactureCommand extends ContainerAwareCommand
             }
 
         }
+        $affaire_sansnum = [];
+        foreach($affaires as $value)
+        {
+            if( $value->getnumfact() == '')
+            {
+                $affaire_sansnum[] =  $value;
+            }
+        }
 
-        $affaire = []; // correspond au affaire non payé et non perdu
+        foreach ($affaires as $value) { // on recupere les numeros de clients de LundiMatin
+
+            $idLMB[] = $value->getidLMB();
+        }
+        $idLMB = array_unique($idLMB);
+        $idLMB = array_values($idLMB);
+        $client = $container->get('stadline_front.soap_service');
+
+        foreach ($idLMB as $value) {
+
+            $factures[] = $client->getFacturesByRefClient($value); //on recupere les factures de LundiMatin
+        }
 
         foreach($affaires as $value)
         {
-            if($value->getnumfact() == '')
+               
+        }
+
+        $compt = 0;
+        foreach ($factures[0] as $value) {
+            $facture[] = $client->getDocument($value['ref_doc']);
+            $compt += 1;
+            var_dump($compt);
+        }
+
+
+        foreach ($affaires as $data) { // on compare les montant des affaires et des factures
+            $tab = [];
+            foreach ($facture as $value) {
+
+                if ($value['montant_ttc'] == $data->getamount()) {
+                    $tab[] = $value;
+
+                }
+
+            }
+            if(isset($tab[1])) //si elle est unique
             {
-                $affaire[] = $value;
+                unset($tab);
+            }
+            elseif($tab != []) { // si elle existe
+
+
+                $query = array("id" => $data->getid(),
+                    "update" => $tab[0]['ref_doc']); // on veut renvoyer notre numero de facture vers Sugar
+
+                var_dump($query);
+                die();
+                $sugarClient->setOpportunities($query);
 
             }
         }
-
-
-        var_dump($affaire);
-        die();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        $Sugar = array();
-
-        $ListeAffaires= [];
-        $Affaires = [];
-        $montant_ht = '1000';
-
-        foreach($Sugar as $data )
-        {
-            if($data['phase_de_vente'] != "payé" or $data['phase_de_vente'] != "perdu")
-            {
-                $ListeAffaires = $data;
-            }
-        }
-
-        foreach($ListeAffaires as $data)
-        {
-            if(!isset($data['ref_doc']))
-            {
-                $Affaires = $data;
-            }
-        }
-
-        $container = $this->getContainer();
-        $client = $container->get('stadline_front.soap_service');
-        $ref_client_affaire = [];
-        foreach($Affaires as $affaire)
-        {
-            $ref_client_affaire =$affaire['ref_client'];
-        }
-
-
-
-        $factures = $client->getAllFactures();
-        foreach($factures as $facture)
-        {
-            $ref_doc[] = $facture['ref_doc'];
-            $ref_contact[] = $facture['ref_contact'];
-        }
-
-        //Apres avoir fait le diffrentiel on obtient une liste de factures qui ne sont pas dans les affaires de Sugar , on l'appelle ici Liste
-
-        $client = $container->get('stadline_tasks.log');
-        $facture = $client->getAffaire($montant_ht,$Affaires);
-        $message_erreur = $client->verification();
 
     }
+
 }
