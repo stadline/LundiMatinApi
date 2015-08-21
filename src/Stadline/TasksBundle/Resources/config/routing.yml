@@ -5,3 +5,8 @@ stadline_tasks_page_log:
 stadline_tasks_page_log_error:
     path:    /log/error
     defaults: { _controller: StadlineTasksBundle:Default:PageLogError}
+
+stadline_tasks_page_assignfacture:
+    path:    /assignfacture
+    defaults: { _controller: StadlineTasksBundle:Default:assignfacture}
+

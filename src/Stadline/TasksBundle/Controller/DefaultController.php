@@ -15,7 +15,7 @@ class DefaultController extends Controller
     public function PageLogAction()
     {
         $client = $this->get('stadline_tasks.log');
-        $data = $client->getAlldata();
+        $data = $client->getAlldata('StadlineTasksBundle:Logger');
 
 
         foreach ($data as $data)
@@ -40,12 +40,12 @@ class DefaultController extends Controller
     public  function PageLogErrorAction()
     {
         $client = $this->get('stadline_tasks.log');
-        $data = $client->getAlldata();
+        $data = $client->getAlldata('StadlineTasksBundle:Logger');
 
 
         foreach ($data as $data)
         {
-            if($data->getErreur() == 'date de creation incorrect' or $data->getErreur() == 'montant ttc incorrect')
+            if($data->getErreur() == 'erreur montant' )
             {
                 $RefAffaire[] = $data->getRefAffaire();
                 $date[] = $data->getDate();
@@ -57,11 +57,35 @@ class DefaultController extends Controller
 
 
         return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
-            'date' => $date,
             'RefAffaire' => $RefAffaire,
+            'date' => $date,
             'erreur' => $erreur,
             'maj' => $maj
         ));
+
+    }
+
+
+    public function assignfactureAction()
+    {
+        $client = $this->get('stadline_tasks.log');
+        $data = $client->getAlldata('StadlineTasksBundle:AssignfactureLog');
+
+        foreach ($data as $value)
+        {
+
+            $Ref[] = $value->getRef();
+            $date[] = $value->getDate();
+            $erreur[] = $value->getErreur();
+            $maj[] = $value->getMaj();
+        }
+
+
+        return $this->render('StadlineTasksBundle:Default:assignefacturelog.html.twig', array(
+            'Ref' => $Ref,
+            'date' => $date,
+            'erreur' => $erreur,
+            'maj' => $maj));
     }
 
 }

@@ -21,6 +21,12 @@ use Stadline\FrontBundle\Service\SoapService;
 
 class AssignFactureCommand extends ContainerAwareCommand
 {
+
+
+
+
+
+
     protected function configure()
     {
         $this
@@ -30,12 +36,21 @@ class AssignFactureCommand extends ContainerAwareCommand
     }
 
 
+
+
+
+
+
+
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
         $container = $this->getContainer();
         $sugarClient = $container->get('stadline_sugar_crm_client');
         $accounts = $sugarClient->getAccounts();
+        $clientlog = $container->get('stadline_tasks.log');
+        $date = date("Y-m-d H:i:s");
         //var_dump($sugarClient->getOpportunities('1249b119-216a-c5f1-a10b-452a99501b77'));
         //var_dump($sugarClient->getOpportunities('6c514565-295c-92ba-a9fa-52f9fd1a7ae5'));
 
@@ -79,58 +94,104 @@ class AssignFactureCommand extends ContainerAwareCommand
             }
         }
 
-        foreach ($affaires as $value) { // on recupere les numeros de clients de LundiMatin
+        if(empty($affaire_sansnum[0]))
+        {
+            var_dump('aucune mise à jour nécessaire');
+            die();
+        }
+
+
+
+        foreach ($affaire_sansnum as $value) { // on recupere les numeros de clients de LundiMatin
 
             $idLMB[] = $value->getidLMB();
+            $id[] = $value->getid();
         }
         $idLMB = array_unique($idLMB);
         $idLMB = array_values($idLMB);
         $client = $container->get('stadline_front.soap_service');
 
-        foreach ($idLMB as $value) {
 
-            $factures[] = $client->getFacturesByRefClient($value); //on recupere les factures de LundiMatin
-        }
 
-        foreach($affaires as $value)
+        foreach ($idLMB as $value)
         {
-               
+
+            $ALLfactures [] = $client->getFacturesByRefClient($value);
+            foreach($affaires as $data)
+            {
+                $num[] = $data->getnumfact();
+            }
+
+            foreach($ALLfactures[0] as $value)
+            {
+                if(!in_array($value['ref_doc'],$num))
+                {
+                    $fact[] = $value;
+                }
+            }
         }
+
+
+
 
         $compt = 0;
-        foreach ($factures[0] as $value) {
-            $facture[] = $client->getDocument($value['ref_doc']);
+        foreach ($fact as $index=>$value) {
+            $fact[$index]['details'] = $client->getDocument($value['ref_doc']);
             $compt += 1;
             var_dump($compt);
         }
 
-
-        foreach ($affaires as $data) { // on compare les montant des affaires et des factures
-            $tab = [];
-            foreach ($facture as $value) {
-
-                if ($value['montant_ttc'] == $data->getamount()) {
-                    $tab[] = $value;
-
-                }
-
-            }
-            if(isset($tab[1])) //si elle est unique
+        foreach($affaire_sansnum as $value)
+        {
+            $final=[];
+            foreach($fact as $data)
             {
-                unset($tab);
+                if($value->getamount()== $data['details']['montant_ttc'])
+                {
+                    $final[] = $data;
+                }
             }
-            elseif($tab != []) { // si elle existe
+
+            if(!empty($final[0]) and empty($final[1]))
+            {
+
+                $refDoc = $clientlog->getpdf($final[0]['ref_doc']);
 
 
-                $query = array("id" => $data->getid(),
-                    "update" => $tab[0]['ref_doc']); // on veut renvoyer notre numero de facture vers Sugar
+                $pdf = 'http://billing.stadline.com/facture/pdf/';
+                $pdf.=$refDoc[0];
 
-                var_dump($query);
-                die();
-                $sugarClient->setOpportunities($query);
+                $query =array( array("name" => "id", "value" => $value->getid()),
+                        array("name" => "num_lmb_fact_c" ,"value" => $final[0]['ref_doc']),
+                        array("name"=>"pdf_lmb_fact_c" ,"value" =>$pdf));
 
+
+                $test = $sugarClient->setOpportunities($query);
+                $maj = 'mise à jour effectuée';
+                $alerte = 'aucune erreur';
             }
+
+            elseif(!empty($final[1]))
+            {
+                $alerte = 'il y a plusieurs factures ayant le même montant que cette affaire';
+                $maj = 'pas de mise à jour';
+            }
+
+            else
+            {
+                $alerte = 'aucun montant ne correspond à cette affaire';
+                $maj = 'pas de mise à jour';
+            }
+            var_dump($maj);
+            var_dump($alerte);
+            $clientlog->getValueAssign($value->getname(),$date,$alerte,$maj);
         }
+
+
+
+        die();
+
+
 
     }
 

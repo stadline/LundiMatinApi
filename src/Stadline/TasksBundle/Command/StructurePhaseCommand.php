@@ -127,11 +127,12 @@ class StructurePhaseCommand extends ContainerAwareCommand
                 }
                 else {
 
-                    var_dump($factures[$index][0]['etat_doc']);
+
                     if ($factures[$index][0]['etat_doc'] == 17 and $data->getSalesStage() != 'Closed Lost') {
 
                         $query = array("id" => $data->getid(),
-                            "update" => 'Closed Lost'    // on veut changer la phase de vente
+                            "update" => 'Closed Lost', // on veut changer la phase de vente
+                             "name" => "sales_stage"
                         );
 
 
@@ -150,6 +151,7 @@ class StructurePhaseCommand extends ContainerAwareCommand
 
         }
         die();
+
     }
 
 }

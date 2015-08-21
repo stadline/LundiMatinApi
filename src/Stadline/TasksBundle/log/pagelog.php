@@ -12,6 +12,7 @@ namespace Stadline\TasksBundle\log;
 use Doctrine\Common\Util\Debug;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Stadline\TasksBundle\Entity\Logger;
+use Stadline\TasksBundle\Entity\AssignfactureLog;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 
@@ -53,11 +54,11 @@ class pagelog extends controller
 
 
 
-    public function getAlldata()
+    public function getAlldata($entity)
 
     {
         $logger = $this->getDoctrine()
-            ->getRepository('StadlineTasksBundle:Logger')
+            ->getRepository($entity)
             ->findAll();
         if (!$logger) {
         throw $this->createNotFoundException(
@@ -126,18 +127,43 @@ class pagelog extends controller
         $accounts = $sugarClient->getAccounts();
 
         $account = [];
-        foreach($accounts as $value)
-        {
+        foreach ($accounts as $value) {
             $data[] = $value->getid();
         }
 
 
-        foreach($data as $value)
-        {
+        foreach ($data as $value) {
             $opportunities[] = $sugarClient->getOpportunities($value);
         }
 
 
         return $opportunities;
+    }
+
+
+    public function getValueAssign($affaire,$date,$erreur,$maj)
+    {
+        $log = new AssignfactureLog ();
+        $log->setRef($affaire);
+
+        $log->setDate($date);
+        $log->setErreur($erreur);
+        $log->setMaj($maj);
+
+
+        $em = $this->getDoctrine()->getManager();
+
+
+
+        $em->persist($log);
+
+        $em->flush();
+    }
+
+    public function getpdf($refDoc)
+    {
+        $salt = $this->container->getParameter('secret');
+        $refDocEncrypt[] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
+        return $refDocEncrypt;
     }
 }
