@@ -1,5 +1,5 @@
 stadline_tasks_page_log:
-    path:     /log
+    path:     /log/phase
     defaults: { _controller: StadlineTasksBundle:Default:PageLog}
 
 stadline_tasks_page_log_error:
@@ -7,6 +7,6 @@ stadline_tasks_page_log_error:
     defaults: { _controller: StadlineTasksBundle:Default:PageLogError}
 
 stadline_tasks_page_assignfacture:
-    path:    /assignfacture
+    path:    /log/assign
     defaults: { _controller: StadlineTasksBundle:Default:assignfacture}
 

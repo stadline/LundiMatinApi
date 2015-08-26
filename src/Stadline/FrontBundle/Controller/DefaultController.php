@@ -217,19 +217,18 @@ class DefaultController extends Controller
         //$accounts = $sugarClient->getAccounts();
         //$sugarClient->getOpportunities('1249b119-216a-c5f1-a10b-452a99501b77');
         //var_dump($sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326')); //Client test
-        $affairetest = $sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326');
-        $soapService = $this->getSoapService();
-        $test = $soapService->getFacturesByRefClient('C-000000-00005');
+        //$data= $sugarClient->getOpportunities('6c514565-295c-92ba-a9fa-52f9fd1a7ae5');
+        //$soapService = $this->getSoapService();
 
-        foreach($test as $index=>$value)
-        {
-            $test[$index]['details'] = $soapService->getDocument($value['ref_doc']);
-            var_dump($test[$index]['details']['montant_ttc']);
-        }
 
+
+        $account = $sugarClient->getContacts(null);
+
+        echo '<pre>';
+        print_r($account);
+        echo '</pre>';
 
         die();
-        $account = $sugarClient->getAccounts();
 
         $affaires = [];
         foreach ($affairetest as $value) {

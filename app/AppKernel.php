@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Stadline\SugarCRMBundle\StadlineSugarCRMBundle(),
             new Stadline\TasksBundle\StadlineTasksBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
+            new Hip\MandrillBundle\HipMandrillBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -10,3 +10,8 @@ services:
              - %stadline_sugar_crm.config.base_url%
              - %stadline_sugar_crm.config.username%
              - %stadline_sugar_crm.config.password%
+
+
+    stadline_tasks.ManagerTelExport:
+        class: Stadline\TasksBundle\Service\ManagerTelExportService
+        arguments: [@service_container]

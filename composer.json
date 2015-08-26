@@ -21,7 +21,9 @@
         "stadline/sugar-crm-bundle": "dev-master",
         "stadline/sugarrestapi": "dev-master",
         "doctrine/migrations": "^1.0",
-        "doctrine/doctrine-migrations-bundle": "^1.0"
+        "doctrine/doctrine-migrations-bundle": "^1.0",
+        "hipaway-travel/mandrill-bundle": "^1.0",
+        "hipaway-travel/mandrill-bundle": "dev-master"
 
         
     },

@@ -34,7 +34,7 @@ class pagelog extends controller
 
     function getValue ($affaire,$date,$erreur,$maj)
     {
-
+        die();
         $logger = new Logger();
         $logger->setRefAffaire($affaire);
 
@@ -143,6 +143,7 @@ class pagelog extends controller
 
     public function getValueAssign($affaire,$date,$erreur,$maj)
     {
+        die();
         $log = new AssignfactureLog ();
         $log->setRef($affaire);
 
@@ -165,5 +166,12 @@ class pagelog extends controller
         $salt = $this->container->getParameter('secret');
         $refDocEncrypt[] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
         return $refDocEncrypt;
+    }
+
+    public function getPageClient($refContact)
+    {
+        $salt = $this->container->getParameter('secret');
+        $hashedRef = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->encrypt($refContact, $salt, true);
+        return $hashedRef;
     }
 }
