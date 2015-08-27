@@ -27,23 +27,16 @@ class StructurePhaseCommand extends ContainerAwareCommand
         $this
             ->setName('Stadline:structurephase')
             ->setDescription('Mettre à jour les phases de ventes des affaires sur Sugar');
-
-
     }
-
-
-
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
 
         $container = $this->getContainer();
         $sugarClient = $container->get('stadline_sugar_crm_client');
         $clientlog = $container->get('stadline_tasks.log');
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
         $date = date("Y-m-d H:i:s");
-
 
         //cette tache cron va récuperer les affaires sur Sugar et trouver la factures associée pour comparer les phases de ventes et les mettres à jour
         foreach ($accounts as $value) {
@@ -71,8 +64,6 @@ class StructurePhaseCommand extends ContainerAwareCommand
 
         if(!isset($affaires[0])){die();} // si aucune facture n'est trouvée le tache s'arrete
 
-
-
         // on veut que nos affaires est un numero de facture pour pouvoir les relier à LundiMatin
         foreach ($affaires as $value) {
             if ($value->getnumfact() != '') {
@@ -80,52 +71,36 @@ class StructurePhaseCommand extends ContainerAwareCommand
             }
         }
 
-
         if(!isset($affaire[0])){die();}
-
 
         // on extrait les factures de LundiMatin avec les reference de factures obtenu juste avant
         $client = $container->get('stadline_front.soap_service');
         foreach ($affaire as $key => $value) {
             $ref = $value->getnumfact();
             $factures[] = $client->getFacturesByRef($ref);
-
-
         }
-
-
 
         // on veut le detail des factures pour avoir le montant
         foreach ($factures as $index => $value) {
-
             $factures[$index]['details'] = $client->getDocument($value[0]['ref_doc']); //pour obtenir le montant de la facture
-
         }
-
-
 
         // on compare le montant des affaires et des factures pour voir si il n'y a pas d'erreur
         foreach ($affaire as $index =>$data) {
 
-
                 // si il y a une erreur on envoie des logs d'erreur et il n'y à pas de mise à jour
-                if ($factures[$index]['details']['montant_ttc'] != $data->getamount()) // comparait les montants des affaires et des factures
+                if ($factures[$index]['details']['net_ht'] != $data->getamount()) // comparait les montants des affaires et des factures
                 {
-                    var_dump('no');
                     $erreur = 'erreur montant';
                     $maj = 'pas de mise à jour';
                     $clientlog->getValue($factures[$index][0]['ref_doc'],$date,$erreur,$maj);// on envoie les logs
-
                 }
                 else {
-
                     // si il n'y a pas d'erreur on regarde si la mise à jour est nécessaire puis on l'effectue et on envoie des logs
-                    if ($factures[$index][0]['etat_doc'] == 17 and $data->getSalesStage() != 'Closed Lost') {
+                    if ($factures[$index][0]['etat_doc'] == 17 && $data->getSalesStage() != 'Closed Lost') {
 
                         $query = array( array("name" => "id", "value" => $data->getid()),
                                         array("name" => "sales_stage", "value" =>'Closed Lost' ));
-
-
 
                         $test = $sugarClient->setOpportunities($query);//on fait la mise à jour
 
@@ -159,8 +134,6 @@ class StructurePhaseCommand extends ContainerAwareCommand
 
                 }
         }
-        die();
-
     }
 
 }

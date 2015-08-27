@@ -20,7 +20,6 @@ class DefaultController extends Controller
 
         foreach ($data as $data)
         {
-
             $RefAffaire[] = $data->getRefAffaire();
             $date[] = $data->getDate();
             $erreur[] = $data->getErreur();

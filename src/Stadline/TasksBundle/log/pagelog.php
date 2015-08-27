@@ -17,8 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 
 
-
-
 class pagelog extends controller
 {
 
