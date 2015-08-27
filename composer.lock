@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6e886c08e64cd631a9d25868441c46d4",
+    "hash": "c46cebb3a4799487faa6454858b2a8e1",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -356,16 +356,16 @@
         },
         {
             "name": "doctrine/doctrine-bundle",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "0b9e27037c4fdbad515ee5ec89842e9091a6480f"
+                "reference": "8c5cedb4f2f7ebb66a963ae46ad9daa1e31cee01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/0b9e27037c4fdbad515ee5ec89842e9091a6480f",
-                "reference": "0b9e27037c4fdbad515ee5ec89842e9091a6480f",
+                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/8c5cedb4f2f7ebb66a963ae46ad9daa1e31cee01",
+                "reference": "8c5cedb4f2f7ebb66a963ae46ad9daa1e31cee01",
                 "shasum": ""
             },
             "require": {
@@ -373,16 +373,16 @@
                 "doctrine/doctrine-cache-bundle": "~1.0",
                 "jdorn/sql-formatter": "~1.1",
                 "php": ">=5.3.2",
-                "symfony/console": "~2.3",
-                "symfony/doctrine-bridge": "~2.2",
-                "symfony/framework-bundle": "~2.3"
+                "symfony/console": "~2.3|~3.0",
+                "symfony/doctrine-bridge": "~2.2|~3.0",
+                "symfony/framework-bundle": "~2.3|~3.0"
             },
             "require-dev": {
                 "doctrine/orm": "~2.3",
                 "phpunit/phpunit": "~4",
                 "satooshi/php-coveralls": "~0.6.1",
-                "symfony/validator": "~2.2",
-                "symfony/yaml": "~2.2",
+                "symfony/validator": "~2.2|~3.0",
+                "symfony/yaml": "~2.2|~3.0",
                 "twig/twig": "~1.10"
             },
             "suggest": {
@@ -430,7 +430,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2015-05-28 12:27:15"
+            "time": "2015-08-12 15:52:00"
         },
         {
             "name": "doctrine/doctrine-cache-bundle",
@@ -991,17 +991,17 @@
         },
         {
             "name": "hipaway-travel/mandrill-bundle",
-            "version": "v1.0.8",
+            "version": "dev-master",
             "target-dir": "Hip/MandrillBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Hipaway-Travel/HipMandrillBundle.git",
-                "reference": "72815c68374a38ba383f24d2dbadd565e6106749"
+                "reference": "964180c70ce8bd79d579e86dafacd06fabff8bf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Hipaway-Travel/HipMandrillBundle/zipball/72815c68374a38ba383f24d2dbadd565e6106749",
-                "reference": "72815c68374a38ba383f24d2dbadd565e6106749",
+                "url": "https://api.github.com/repos/Hipaway-Travel/HipMandrillBundle/zipball/964180c70ce8bd79d579e86dafacd06fabff8bf8",
+                "reference": "964180c70ce8bd79d579e86dafacd06fabff8bf8",
                 "shasum": ""
             },
             "require": {
@@ -1039,7 +1039,7 @@
                 "transaction mail",
                 "transactional"
             ],
-            "time": "2015-04-16 19:26:19"
+            "time": "2015-07-01 20:16:04"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -1261,16 +1261,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.15.0",
+            "version": "1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "dc5150cc608f2334c72c3b6a553ec9668a4156b0"
+                "reference": "c0c0b4bee3aabce7182876b0d912ef2595563db7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/dc5150cc608f2334c72c3b6a553ec9668a4156b0",
-                "reference": "dc5150cc608f2334c72c3b6a553ec9668a4156b0",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c0c0b4bee3aabce7182876b0d912ef2595563db7",
+                "reference": "c0c0b4bee3aabce7182876b0d912ef2595563db7",
                 "shasum": ""
             },
             "require": {
@@ -1307,7 +1307,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.15.x-dev"
+                    "dev-master": "1.16.x-dev"
                 }
             },
             "autoload": {
@@ -1333,7 +1333,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2015-07-12 13:54:09"
+            "time": "2015-08-09 17:44:44"
         },
         {
             "name": "psr/log",
@@ -1490,16 +1490,16 @@
         },
         {
             "name": "sensiolabs/security-checker",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/security-checker.git",
-                "reference": "8d32035cfe692efb3dddd0d828f8261280ec9006"
+                "reference": "7735fd97ff7303d9df776b8dbc970f949399abc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/8d32035cfe692efb3dddd0d828f8261280ec9006",
-                "reference": "8d32035cfe692efb3dddd0d828f8261280ec9006",
+                "url": "https://api.github.com/repos/sensiolabs/security-checker/zipball/7735fd97ff7303d9df776b8dbc970f949399abc9",
+                "reference": "7735fd97ff7303d9df776b8dbc970f949399abc9",
                 "shasum": ""
             },
             "require": {
@@ -1530,7 +1530,7 @@
                 }
             ],
             "description": "A security checker for your composer.lock",
-            "time": "2015-08-03 10:03:32"
+            "time": "2015-08-11 12:11:25"
         },
         {
             "name": "stadline/sugar-crm-bundle",
@@ -1539,12 +1539,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stadline/SugarCRMBundle.git",
-                "reference": "175c80928da35626e4e60346b52977dbf93b0689"
+                "reference": "4a1b8c54707ab59b5fd1c30dc9c345c135ef76d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stadline/SugarCRMBundle/zipball/175c80928da35626e4e60346b52977dbf93b0689",
-                "reference": "175c80928da35626e4e60346b52977dbf93b0689",
+                "url": "https://api.github.com/repos/stadline/SugarCRMBundle/zipball/4a1b8c54707ab59b5fd1c30dc9c345c135ef76d7",
+                "reference": "4a1b8c54707ab59b5fd1c30dc9c345c135ef76d7",
                 "shasum": ""
             },
             "require": {
@@ -1576,7 +1576,7 @@
                 "source": "https://github.com/stadline/SugarCRMBundle/tree/master",
                 "issues": "https://github.com/stadline/SugarCRMBundle/issues"
             },
-            "time": "2015-08-06 11:45:10"
+            "time": "2015-08-27 07:46:11"
         },
         {
             "name": "stadline/sugarrestapi",
@@ -1978,20 +1978,20 @@
         },
         {
             "name": "twig/extensions",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig-extensions.git",
-                "reference": "8cf4b9fe04077bd54fc73f4fde83347040c3b8cd"
+                "reference": "449e3c8a9ffad7c2479c7864557275a32b037499"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/8cf4b9fe04077bd54fc73f4fde83347040c3b8cd",
-                "reference": "8cf4b9fe04077bd54fc73f4fde83347040c3b8cd",
+                "url": "https://api.github.com/repos/twigphp/Twig-extensions/zipball/449e3c8a9ffad7c2479c7864557275a32b037499",
+                "reference": "449e3c8a9ffad7c2479c7864557275a32b037499",
                 "shasum": ""
             },
             "require": {
-                "twig/twig": "~1.12"
+                "twig/twig": "~1.20|~2.0"
             },
             "require-dev": {
                 "symfony/translation": "~2.3"
@@ -2002,7 +2002,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2.x-dev"
+                    "dev-master": "1.3-dev"
                 }
             },
             "autoload": {
@@ -2026,29 +2026,33 @@
                 "i18n",
                 "text"
             ],
-            "time": "2014-10-30 14:30:03"
+            "time": "2015-08-22 16:38:35"
         },
         {
             "name": "twig/twig",
-            "version": "v1.19.0",
+            "version": "v1.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "edbeaf43b0a606cdaadc32a11d2673614a377b90"
+                "reference": "ca8d3aa90b6a01c82e07909fe815d6b443e75a23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/edbeaf43b0a606cdaadc32a11d2673614a377b90",
-                "reference": "edbeaf43b0a606cdaadc32a11d2673614a377b90",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/ca8d3aa90b6a01c82e07909fe815d6b443e75a23",
+                "reference": "ca8d3aa90b6a01c82e07909fe815d6b443e75a23",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.7"
             },
+            "require-dev": {
+                "symfony/debug": "~2.7",
+                "symfony/phpunit-bridge": "~2.7"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.19-dev"
+                    "dev-master": "1.21-dev"
                 }
             },
             "autoload": {
@@ -2083,7 +2087,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-07-31 13:45:26"
+            "time": "2015-08-26 08:58:31"
         }
     ],
     "packages-dev": [
@@ -2140,7 +2144,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "stadline/sugar-crm-bundle": 20,
-        "stadline/sugarrestapi": 20
+        "stadline/sugarrestapi": 20,
+        "hipaway-travel/mandrill-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
