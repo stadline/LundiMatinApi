@@ -3,7 +3,6 @@ services:
         class: Stadline\TasksBundle\log\pagelog
         arguments: [@service_container]
 
-
     stadline_sugar_crm_client:
          class: %stadline_sugar_crm.client.class%
          arguments:

@@ -12,14 +12,12 @@
 namespace Stadline\TasksBundle\Service;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 
-class ManagerTelExportService extends controller
+class ManagerTelExportService
 {
-
 
     /**
      * @param ContainerInterface $container
@@ -29,23 +27,16 @@ class ManagerTelExportService extends controller
         $this->container = $container;
     }
 
-
-
-    function getDataFromSugar()
+    public function getDataFromSugar()
     {
         $sugarClient = $this->get('stadline_sugar_crm_client');
-
         $contacts = $sugarClient->getContacts(null);
 
-
-        return$contacts;
-
-
-
+        return $contacts;
     }
 
 
-    function generateCsv($data)
+    public function generateCsv($data)
     {
         $chemin = 'Sugar.csv';
         $delimiteur = ',';

@@ -10,16 +10,14 @@ namespace Stadline\TasksBundle\log;
 
 
 use Doctrine\Common\Util\Debug;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Stadline\TasksBundle\Entity\Logger;
 use Stadline\TasksBundle\Entity\AssignfactureLog;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 
 
-class pagelog extends controller
+class pagelog
 {
-
 
     /**
      * @param ContainerInterface $container
@@ -55,19 +53,19 @@ class pagelog extends controller
     public function getAlldata($entity)
 
     {
-        $logger = $this->getDoctrine()
+        $entities = $this->getDoctrine()
             ->getRepository($entity)
             ->findAll();
-        if (!$logger) {
-        throw $this->createNotFoundException(
-            'Aucun produit trouvé'
-        );
+        if (!$entities) {
+            throw $this->createNotFoundException(
+                'Aucun produit trouvé'
+            );
         }
-        return $logger;
+        return $entities;
 
     }
 
-    function getAffaire($montantHT,$Sugar)
+    public function getAffaire($montantHT,$Sugar)
     {
         $Facture = [];
 

@@ -36,14 +36,11 @@ class ManagerTelExportCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
+        $manager = $container->get('stadline_tasks.ManagerTelExport');
+        $contacts = $manager->getDataFromSugar();
+        $csv = $manager->generateCsv($contacts);
 
-        $sugarClient = $container->get('stadline_tasks.ManagerTelExport');
-
-        $contacts = $sugarClient->getDataFromSugar();
-
-        $csv = $sugarClient->generateCsv($contacts);
-
-
+        // send email.
     }
 
 }
