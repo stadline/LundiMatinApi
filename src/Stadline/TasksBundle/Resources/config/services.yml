@@ -14,3 +14,7 @@ services:
     stadline_tasks.ManagerTelExport:
         class: Stadline\TasksBundle\Service\ManagerTelExportService
         arguments: [@service_container]
+
+    stadline_tasks.ManagerCommand:
+        class: Stadline\TasksBundle\Service\ManagerCommandService
+        arguments: ["@service_container","@doctrine.orm.entity_manager"]

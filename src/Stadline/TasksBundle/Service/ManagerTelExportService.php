@@ -29,8 +29,10 @@ class ManagerTelExportService
 
     public function getDataFromSugar()
     {
-        $sugarClient = $this->get('stadline_sugar_crm_client');
+
+        $sugarClient = $this->container->get('stadline_sugar_crm_client');
         $contacts = $sugarClient->getContacts(null);
+
 
         return $contacts;
     }

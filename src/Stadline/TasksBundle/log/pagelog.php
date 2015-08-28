@@ -28,42 +28,7 @@ class pagelog
     }
 
 
-    function getValue ($affaire,$date,$erreur,$maj)
-    {
-        die();
-        $logger = new Logger();
-        $logger->setRefAffaire($affaire);
 
-        $logger->setDate($date);
-        $logger->setErreur($erreur);
-        $logger->setMaj($maj);
-
-
-        $em = $this->getDoctrine()->getManager();
-
-
-
-        $em->persist($logger);
-
-        $em->flush();
-    }
-
-
-
-    public function getAlldata($entity)
-
-    {
-        $entities = $this->getDoctrine()
-            ->getRepository($entity)
-            ->findAll();
-        if (!$entities) {
-            throw $this->createNotFoundException(
-                'Aucun produit trouvé'
-            );
-        }
-        return $entities;
-
-    }
 
     public function getAffaire($montantHT,$Sugar)
     {
@@ -137,32 +102,9 @@ class pagelog
     }
 
 
-    public function getValueAssign($affaire,$date,$erreur,$maj)
-    {
-        die();
-        $log = new AssignfactureLog ();
-        $log->setRef($affaire);
-
-        $log->setDate($date);
-        $log->setErreur($erreur);
-        $log->setMaj($maj);
-
-
-        $em = $this->getDoctrine()->getManager();
 
 
 
-        $em->persist($log);
-
-        $em->flush();
-    }
-
-    public function getpdf($refDoc)
-    {
-        $salt = $this->container->getParameter('secret');
-        $refDocEncrypt[] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
-        return $refDocEncrypt;
-    }
 
     public function getPageClient($refContact)
     {

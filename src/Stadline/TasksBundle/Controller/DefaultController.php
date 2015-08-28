@@ -14,7 +14,7 @@ class DefaultController extends Controller
 
     public function PageLogAction()
     {
-        $client = $this->get('stadline_tasks.log');
+        $client = $this->get('stadline_tasks.ManagerCommand');
         $data = $client->getAlldata('StadlineTasksBundle:Logger');
 
 
@@ -38,7 +38,7 @@ class DefaultController extends Controller
 
     public  function PageLogErrorAction()
     {
-        $client = $this->get('stadline_tasks.log');
+        $client = $this->get('stadline_tasks.ManagerCommand');
         $data = $client->getAlldata('StadlineTasksBundle:Logger');
 
 
@@ -67,7 +67,7 @@ class DefaultController extends Controller
 
     public function assignfactureAction()
     {
-        $client = $this->get('stadline_tasks.log');
+        $client = $this->get('stadline_tasks.ManagerCommand');
         $data = $client->getAlldata('StadlineTasksBundle:AssignfactureLog');
 
         foreach ($data as $value)
