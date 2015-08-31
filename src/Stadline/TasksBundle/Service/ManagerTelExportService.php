@@ -51,12 +51,22 @@ class ManagerTelExportService
         foreach($data as $lignes)
         {
 
+            $WorkPhone = $lignes->getWorkPhone();
+            if(preg_match('#^([1-9][ ]?){9}$#',$WorkPhone))
+            {
+                $WorkPhone = '0'.$WorkPhone;
+            }
+            $WorkMobile = $lignes->getWorkMobile();
+            if(preg_match('#^([1-9][ ]?){9}$#',$WorkMobile))
+            {
+                $WorkMobile = '0'.$WorkMobile;
+            }
 
             $ligne[0] = $lignes->getGroup();
             $ligne[1] = $lignes->getFirstname();
             $ligne[2] = $lignes->getLastname();
-            $ligne[3] = $lignes->getWorkPhone();
-            $ligne[4] = $lignes->getWorkMobile();
+            $ligne[3] = $WorkPhone;
+            $ligne[4] = $WorkMobile;
             $ligne[5] = $lignes->gethomePhone();
             $ligne[6] = $lignes->gethomeMobile();
 
@@ -75,9 +85,5 @@ class ManagerTelExportService
     {
 
     }
-
-
-
-
 
 }

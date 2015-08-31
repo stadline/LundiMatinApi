@@ -222,10 +222,10 @@ class DefaultController extends Controller
 
 
 
-        $account = $sugarClient->getContacts(null);
+        $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
 
         echo '<pre>';
-        print_r($account);
+        print_r($accounts);
         echo '</pre>';
 
         die();

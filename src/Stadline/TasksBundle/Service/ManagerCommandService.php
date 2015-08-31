@@ -32,11 +32,19 @@ class ManagerCommandService
     public function getpdf($refDoc)
     {
 
-        //$container = $this->getContainer();
+
         $salt = $this->container->getParameter('secret');
 
         $refDocEncrypt[] = $this->em->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
         return $refDocEncrypt;
+    }
+
+    public  function getclient($refclient)
+    {
+       $salt =  $salt = $this->container->getParameter('secret');
+
+        $refclientEncrypt[] = $this->em->getRepository('StadlineFrontBundle:Contact')->encrypt($refclient, $salt, true);
+        return $refclientEncrypt;
     }
 
     public function getValueAssign($affaire,$date,$erreur,$maj)
