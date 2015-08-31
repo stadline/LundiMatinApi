@@ -208,19 +208,7 @@ class DefaultController extends Controller
     public function testSugarAction()
     {
 
-
-
-
         $sugarClient = $this->get('stadline_sugar_crm_client');
-
-
-        //$accounts = $sugarClient->getAccounts();
-        //$sugarClient->getOpportunities('1249b119-216a-c5f1-a10b-452a99501b77');
-        //var_dump($sugarClient->getOpportunities('7aa3a0b2-ebb8-108e-1bc6-55c895a8e326')); //Client test
-        //$data= $sugarClient->getOpportunities('6c514565-295c-92ba-a9fa-52f9fd1a7ae5');
-        //$soapService = $this->getSoapService();
-
-
 
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
 
@@ -229,67 +217,6 @@ class DefaultController extends Controller
         echo '</pre>';
 
         die();
-
-        $affaires = [];
-        foreach ($affairetest as $value) {
-            if ($value->getSalesStage() != 'Closed Won' and $value->getSalesStage() != 'Closed Lost' and $value->getnumfact() == '') {
-                $affaires [] = $value;
-            }
-
-
-        }
-
-        foreach($affaires as $value)
-        {
-
-            $idLMB[] = $value->getidLMB();
-        }
-        $idLMB = array_unique($idLMB);
-        $idLMB = array_values($idLMB);
-        $soapService = $this->getSoapService();
-        foreach($idLMB as $value)
-        {
-
-            $factures[] = $soapService->getFacturesByRefClient($value);
-        }
-
-        $soapService = $this->getSoapService();
-        foreach($factures[0] as $value) {
-            $facture[] = $soapService->getDocument($value['ref_doc']);
-
-        }
-
-
-        foreach($affaires as $data)
-
-        {
-            $tab = [];
-            foreach($facture as $value)
-            {
-
-                if($value['montant_ttc'] == $data->getamount())
-                {
-                    $tab[] = $value;
-
-                }
-            }
-            $finalfact[] = $tab;
-
-        }
-
-        foreach($finalfact as $key => $value)
-        {
-            if(isset($value[1]))
-            {
-                unset($finalfact[$key]);
-
-            }
-        }
-        $finalfact = array_values($finalfact);
-        var_dump($finalfact);
-        die();
-
     }
-
 
 }

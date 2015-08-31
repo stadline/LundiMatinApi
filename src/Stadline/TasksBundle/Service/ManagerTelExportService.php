@@ -31,7 +31,7 @@ class ManagerTelExportService
     {
 
         $sugarClient = $this->container->get('stadline_sugar_crm_client');
-        $contacts = $sugarClient->getContacts(null);
+        $contacts = $sugarClient->getContacts(null); // on prend tous les contacts
 
 
         return $contacts;
@@ -52,12 +52,12 @@ class ManagerTelExportService
         {
 
             $WorkPhone = $lignes->getWorkPhone();
-            if(preg_match('#^([1-9][ ]?){9}$#',$WorkPhone))
+            if(preg_match('#^([1-9][ ]?){9}$#',$WorkPhone)) //certain numero ne sont pas valides
             {
                 $WorkPhone = '0'.$WorkPhone;
             }
             $WorkMobile = $lignes->getWorkMobile();
-            if(preg_match('#^([1-9][ ]?){9}$#',$WorkMobile))
+            if(preg_match('#^([1-9][ ]?){9}$#',$WorkMobile)) //certain numero ne sont pas valides
             {
                 $WorkMobile = '0'.$WorkMobile;
             }
