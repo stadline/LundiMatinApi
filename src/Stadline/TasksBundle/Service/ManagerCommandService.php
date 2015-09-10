@@ -23,7 +23,7 @@ class ManagerCommandService
     private $container;
     private $em;
 
-    public function __construct(ContainerInterface $container,EntityManager $em)
+    public function __construct(ContainerInterface $container, EntityManager $em)
     {
         $this->container = $container;
         $this->em = $em;
@@ -31,23 +31,34 @@ class ManagerCommandService
 
     public function getpdf($refDoc)
     {
-
-
         $salt = $this->container->getParameter('secret');
-
-        $refDocEncrypt[] = $this->em->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
+        $refDocEncrypt = $this->em->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc, $salt, true);
         return $refDocEncrypt;
     }
 
-    public  function getclient($refclient)
+    public function getclient($refclient)
     {
-       $salt =  $salt = $this->container->getParameter('secret');
+        $salt = $salt = $this->container->getParameter('secret');
 
         $refclientEncrypt[] = $this->em->getRepository('StadlineFrontBundle:Contact')->encrypt($refclient, $salt, true);
+
         return $refclientEncrypt;
     }
 
-    public function getValueAssign($affaire,$date,$erreur,$maj)
+    /**
+     * @deprecated
+     *
+     * @param $affaire
+     * @param $date
+     * @param $erreur
+     * @param $maj
+     */
+    public function getValueAssign($affaire, $date, $erreur, $maj)
+    {
+        return $this->createNewLogEntry($affaire, $date, $erreur, $maj);
+    }
+
+    public function createNewLogEntry($affaire, $date, $erreur, $maj)
     {
 
         $log = new AssignfactureLog ();
@@ -57,19 +68,14 @@ class ManagerCommandService
         $log->setErreur($erreur);
         $log->setMaj($maj);
 
-
         $em = $this->em;
 
-
-
         $em->persist($log);
-
         $em->flush();
     }
 
 
     public function getAlldata($entity)
-
     {
         $entities = $this->em
             ->getRepository($entity)
@@ -79,11 +85,12 @@ class ManagerCommandService
                 'Aucun produit trouvé'
             );
         }
+
         return $entities;
 
     }
 
-    function getValue ($affaire,$date,$erreur,$maj)
+    function getValue($affaire, $date, $erreur, $maj)
     {
 
         $logger = new Logger();
@@ -95,7 +102,6 @@ class ManagerCommandService
 
 
         $em = $this->em;
-
 
 
         $em->persist($logger);

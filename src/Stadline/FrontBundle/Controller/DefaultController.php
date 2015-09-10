@@ -47,13 +47,11 @@ class DefaultController extends Controller
                 $displayfactures[$index] = $factures[$index];
                 $salt = $this->container->getParameter('secret');
                 $refDoc = $factures[$index]["ref_doc"];
-                $refDocEncrypt[] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
+                var_dump($factures[$index]["ref_doc"]);
+                var_dump($factures[$index]["ref_doc"]);
+                $refDocEncrypt[$index] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
             }
-
-
         }
-
-
 
         return $this->render('StadlineFrontBundle:Default:index.html.twig', array(
             'factures' => $displayfactures,

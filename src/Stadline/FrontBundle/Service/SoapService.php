@@ -133,7 +133,6 @@ class SoapService extends ContainerAwareCommand
                 'ref_doc' => $refDoc
             )));
 
-            
             $data = json_decode($response['data'], true);
             
         } catch (\SoapFault $e) {

@@ -27,9 +27,6 @@ class pagelog
         $this->container = $container;
     }
 
-
-
-
     public function getAffaire($montantHT,$Sugar)
     {
         $Facture = [];
@@ -100,9 +97,6 @@ class pagelog
 
         return $opportunities;
     }
-
-
-
 
 
 

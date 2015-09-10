@@ -17,192 +17,137 @@ class InvoiceHandlerManager
     const SALE_STAGE_WON = 'Closed Won';
     const DATE_INTERVALLE = '+90';
 
+    private $container = null;
+    private $output = null;
+
     public function executeAssignFactureCommand($container, $input, $output)
     {
+        $this->container = $container;
+        $this->output = $output;
+
         // get sugar client
         /** @var  Client */
-        $sugarClient = $container->get('stadline_sugar_crm_client');
+        $sugarClient = $this->getSugarClient();
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
+
         // get logs service
         $date = date("Y-m-d H:i:s");
-        $ManagerCommand = $container->get('stadline_tasks.ManagerCommand');
+        $ManagerCommand = $this->getCommandManager();
 
+        $numclients = $this->getSugarClientNumber();
 
-        $numclients = array();
-        // pour chaque compte client, je récupère l'id du compte pour ensuite aller chercher les affaires.
-        foreach ($accounts as $value) {
-            $numclients[$value->getid()] = $value->getname();//on recupere tout les id des comptes clients de Sugar
-            if($value->getname() == 'Test Lundi Matin')
-            {
-                $refclient = $ManagerCommand->getclient($value->getidLMB());
-                $LienClient = 'http://billing.stadline.com/factures/'.$refclient[0]; // on met un lien pour acceder à lundiMatin à partir de Sugar
-                $query = array(array("name" =>"id","value" =>$value->getid()),
-                    array("name"=>"url_etat_client_lmb_c","value" =>$LienClient));
+        // test Kipsta
+        $numclients = array('1f030ea0-1523-fbcd-d979-542c1cfc8364' => 'Kipsta');
 
-
-                $sugarClient->setAccounts($query); // on fait la mise à jour sur sugar
-            }
-
-
-            if($value->getname() == "Mobile Angelo" or $value->getname() == "7 à 77 fitness" or $value->getname() == "Kipsta" ) {
-                $valeurtest[$value->getid()] = $value->getname();
-            }
-        }
-
-
-
-        $affaires = array();
-        $affaire_sansnum = array();
-        $idLMB = array();
-        // Pour chaque compte de Sugar on récupere toutes ses affaires et on ne selectionne que celles qui ne sont pas perdue ou payée
-        foreach ($valeurtest as $clientId => $clientName)
-        {
-            $opportunities = $sugarClient->getOpportunities($clientId);
-            if (count($opportunities) > 0) {
-                foreach ($opportunities as $SalesStage) {
-                    if ( $SalesStage->getSalesStage() != self::SALE_STAGE_LOST and $SalesStage->getSalesStage() != self::SALE_STAGE_WON) {
-                        $affaires[] = $SalesStage;
-                        if( $SalesStage->getnumfact() == '')
-                        {
-                            //on selectionne les affaires qui n'ont pas encore de numero de facture
-                            $affaire_sansnum[] =  $SalesStage;
-
-                            // on recupere les numeros de client Lundimatin des affaires
-                            if ($SalesStage->getidLMB() != "") {
-                                $idLMB[] = $SalesStage->getidLMB();
-                            }
-                            $output->writeln('> Affaire sans numéro LM trouvée pour '.$clientName.' : '.$SalesStage->getname());
-                        } else {
-                            $output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$SalesStage->getname());
-                        }
-                    }
-                }
-            }
-        }
-
-        $idLMB = array_values(array_unique($idLMB));// on fait en sorte d'enlever les doublons et on supprime les index.
+        $affaires = $this->extractAffairesFromSugar($numclients);
 
         // si j'ai aucune affaire sans num de facture, je peux arréter le script
-        if(empty($affaire_sansnum[0])) {
-            $output->writeln('> aucune mise à jour nécessaire');
+        if(empty($affaires['without_num'][0])) {
+            $this->output->writeln('> aucune mise à jour nécessaire');
             exit;
         }
 
         // client pour lundiMatin
-        $num = array();
-        foreach($affaires as $data)
-        {
-            $num[] = $data->getnumfact();
-        }
-
         $client = $container->get('stadline_front.soap_service');
-        foreach ($idLMB as $value)
+        $montantfacture = array();
+        foreach ($affaires['idLMB'] as $value)
         {
             // on prend les factures du compte qui a au moins une facture sans numéro sur sugar
-            $ALLfactures = $client->getFacturesByRefClient($value);
-            foreach($ALLfactures as $data)
+            $allLMBInvoices = $client->getFacturesByRefClient($value);
+            foreach($allLMBInvoices as $data)
             {
                 // si une facture n'est pas reliée à une affaire on la prend , il faudra l'associer plus tard
-                if(!in_array($data['ref_doc'],$num) && $data['type_doc'] == '4')
+                if(!in_array($data['ref_doc'], $affaires['num']) && $data['type_doc'] == '4')
                 {
                     // je vais chercher plus d'info sur cette facture pour avoir le montant
                     $data['details'] =  $client->getDocument($data['ref_doc']);
-                    $fact[] = $data;
-                    $output->writeln('> Facture inconnue sur Sugar trouvée : '.$data['ref_doc']);
+
+                    // j'index un tableau par montant HT
+                    $ht = ($data['details']['montant_ttc'] - $data['details']['montant_tva']);
+                    if(!isset($montantfacture[$ht])) {
+                        $montantfacture[$ht] = array();
+                    }
+                    // on met la date en Datetime pour faire la diffrence des deux ensuite
+                    $montantfacture[$ht][] = array("ref_doc" => $data['ref_doc'], "date_creation" => new \DateTime($data['date_creation_doc']));
+
+                    $this->output->writeln('> Facture inconnue sur Sugar trouvée : '.$data['ref_doc'].' pour le montant HT de '.$ht);
                 }
             }
         }
 
-
-
-        foreach($affaire_sansnum as $value) {
-
-
-            $montantaffaire[$value->getamount()][] = array($value->getname(),$value->getid(),$value->getClosedAt());
+        $affaireSortedByAmount = array();
+        foreach($affaires['without_num'] as $value) {
+            // init array
+            if(!isset($affaireSortedByAmount[$value->getamount()])) {
+                $affaireSortedByAmount[$value->getamount()] = array();
+            }
+            $affaireSortedByAmount[$value->getamount()][] = array("name" => $value->getname(), "ref_sugar_id" => $value->getid(), "date_closed" => $value->getClosedAt());
         }
 
-        foreach ($fact as $data) {
-
-
-            $ht = $data['details']['net_ht'];
-            $dateclosed = new \DateTime($data['date_creation_doc']); // on met la date en Datetime pour faire la diffrence des deux ensuite
-
-            $montantfacture[$ht][] = array($data['ref_doc'],$dateclosed);
-        }
-
-
-
-
-
-
-                // on associe les factures et affaires sans numero de facture en comparant leur montant , si ils sont pareils on selectionne la facture
-        foreach($montantaffaire as $index => $value)
+        // on associe les factures et affaires sans numero de facture en comparant leur montant , si ils sont pareils on selectionne la facture
+        foreach($affaireSortedByAmount as $amount => $affaires)
         {
-                // on regarde si la facture est unique et si elle existe puis on compare la date
-            if(!empty($montantfacture[$index]) && count($montantfacture[$index])== 1 && count($value) == 1 && $value[0][2]->diff($montantfacture[$index][0][1],true)->format('%R%a days') < self::DATE_INTERVALLE)
+
+            // on regarde si la facture est unique et si elle existe puis on compare la date
+            if(!empty($montantfacture[$amount]) && count($montantfacture[$amount])== 1 && count($affaires) == 1 && $affaires[0]["date_closed"]->diff($montantfacture[$amount][0]["date_creation"],true)->format('%R%a days') < self::DATE_INTERVALLE)
             {
 
-                $refDoc = $ManagerCommand->getpdf($montantfacture[$index][0][0]);
-                $pdf = 'http://billing.stadline.com/facture/pdf/'.$refDoc[0]; // on met un lien pour que le client puisse telecharger sa facture
 
-                $query = array(array("name" => "id", "value" => $value[0][1]),
-                    array("name" => "num_lmb_fact_c", "value" => $montantfacture[$index][0][0]),
-                    array("name" => "pdf_lmb_fact_c", "value" => $pdf));
 
-                //$sugarClient->setOpportunities($query); // on fait la mise à jour sur sugar
+                $refDoc = $ManagerCommand->getpdf($montantfacture[$amount][0]["ref_doc"]);
+                $pdfLink = 'http://billing.stadline.com/facture/pdf/'.$refDoc; // on met un lien pour que le client puisse telecharger sa facture
 
+                $query = array(array("name" => "id", "value" => $affaires[0]["ref_sugar_id"]),
+                    array("name" => "num_lmb_fact_c", "value" => $montantfacture[$amount][0]["ref_doc"]),
+                    array("name" => "pdf_lmb_fact_c", "value" => $pdfLink));
+
+                $sugarClient->setOpportunities($query); // on fait la mise à jour sur sugar
 
                 $maj = 'mise à jour effectuée';
                 $alerte = 'aucune erreur';
-                $output->writeln('> '.$value[0][0].' : '.$alerte.' - '.$maj);
-                unset($montantfacture[$index]);
+                unset($montantfacture[$amount]);
             }
 
-            elseif(!empty($montantfacture[$index]) && count($montantfacture[$index])> 1 )
+            elseif(!empty($montantfacture[$amount]) && count($montantfacture[$amount])> 1 )
             {
                 $maj = 'pas de mise à jour';
                 $alerte = 'il existe plusieurs factures avec le même montant';
-                $output->writeln('> '.$value[0][0].' : '.$alerte.' - '.$maj);
             }
 
-            elseif( !empty($montantfacture[$index]) && count($value) > 1)
+            elseif( !empty($montantfacture[$amount]) && count($affaires) > 1)
             {
                 $maj = 'pas de mise à jour';
                 $alerte = 'il existe plusieurs affaires avec le même montant';
-                $output->writeln('> '.$value[0][0].' : '.$alerte.' - '.$maj);
             }
 
-            elseif(empty($montantfacture[$index]) && count($value) > 1)
+            elseif(empty($montantfacture[$amount]) && count($affaires) > 1)
             {
                 $maj = 'pas de mise à jour';
                 $alerte = 'il existe plusieurs affaires avec le même montant et aucune facture ne correspond';
-                $output->writeln('> '.$value[0][0].' : '.$alerte.' - '.$maj);
             }
             else
             {
                 $alerte = 'aucun montant ne correspond à cette affaire';
                 $maj = 'pas de mise à jour';
-                $output->writeln('> '.$value[0][0].' : '.$alerte.' - '.$maj);
             }
 
-            //$ManagerCommand->getValueAssign($value[0][0], $date, $alerte, $maj); // on envoit les logs
+            $this->output->writeln('> '.$affaires[0]["name"].' : '.$alerte.' - '.$maj);
+            $ManagerCommand->createNewLogEntry($affaires[0]["name"], $date, $alerte, $maj); // on envoit les logs
         }
-
     }
-
-
-
-
 
     public function executeStructurePhaseCommand($container, $input, $output)
     {
+        $this->container = $container;
+        $this->input = $input;
+        $this->output = $output;
+
         // get sugar client
         /** @var  Client */
         $sugarClient = $container->get('stadline_sugar_crm_client');
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
         $date = date("Y-m-d H:i:s");
         $ManagerCommand = $container->get('stadline_tasks.ManagerCommand');
-
 
         $numclients = array();
         $valeurtest = array();
@@ -225,16 +170,16 @@ class InvoiceHandlerManager
             $opportunities = $sugarClient->getOpportunities($clientId);
 
             if (count($opportunities) > 0) {
-                foreach ($opportunities as $SalesStage) {
+                foreach ($opportunities as $salesStage) {
 
-                    if ( $SalesStage->getSalesStage() != self::SALE_STAGE_LOST && $SalesStage->getSalesStage() != self::SALE_STAGE_WON && $SalesStage->getnumfact() != '') {
-                        $output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$SalesStage->getname());
-                        $affaires[] = $SalesStage;
-                        $ref = $SalesStage->getnumfact();
+                    if ( $salesStage->getSalesStage() != self::SALE_STAGE_LOST && $salesStage->getSalesStage() != self::SALE_STAGE_WON && $salesStage->getnumfact() != '') {
+                        $this->output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                        $affaires[] = $salesStage;
+                        $ref = $salesStage->getnumfact();
                         $factures[] = $client->getFacturesByRef($ref);
                     }
                     else {
-                        $output->writeln('> Affaire sans numéro LM trouvée pour ' . $clientName . ' : ' . $SalesStage->getname());
+                        $this->output->writeln('> Affaire sans numéro LM trouvée pour ' . $clientName . ' : ' . $salesStage->getname());
                     }
                 }
             }
@@ -252,13 +197,7 @@ class InvoiceHandlerManager
 
             foreach($factures as $value)
             {
-
-
-
-                //var_dump($value['details']);
                 if( $value['details']['net_ht'] == $data->getamount() &&  $data->getClosedAt()->diff(new \DateTime($value[0]['date_creation_doc']),true)->format('%R%a days') < self::DATE_INTERVALLE) {
-
-
                     switch($value[0]['etat_doc'])
                     {
                         case 17:
@@ -313,7 +252,7 @@ class InvoiceHandlerManager
 
 
                 }
-                $output->writeln('> '.$data->getname().' : '.$erreur.' - '.$maj);
+                $this->output->writeln('> '.$data->getname().' : '.$erreur.' - '.$maj);
                 $ManagerCommand->getValue($factures[$index][0]['ref_doc'],$date,$erreur,$maj);// on envoie les logs
 
             }
@@ -322,5 +261,99 @@ class InvoiceHandlerManager
         }
     }
 
+    /**
+     * Return an array of the Sugar Client Number
+     * @return array collection indexed by [sugarClientId] => ClientName
+     */
+    private function getSugarClientNumber() {
+        // get sugar client
+        $sugarClient = $this->getSugarClient();
+        $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
+
+        $clients = array();
+        // pour chaque compte client, je récupère l'id du compte pour ensuite aller chercher les affaires.
+        foreach ($accounts as $value) {
+            $clients[$value->getid()] = $value->getname(); //on recupere tout les id des comptes clients de Sugar
+
+            // update only for Lundi Matin right now
+            if($value->getname() == 'Test Lundi Matin')
+            {
+//                $this->updateBillingLinkOnSugar($value->getid(), $value->getidLMB());
+            }
+        }
+
+        return $clients;
+    }
+
+    /**
+     * Update client link on sugar for a sugarClientId and LMBClientId
+     * @param $sugarClientId
+     * @param $LMBClientId
+     */
+    private function updateBillingLinkOnSugar($sugarClientId, $LMBClientId) {
+        $commandManager = $this->getCommandManager();
+
+        $LMBrefclient = $commandManager->getclient($LMBClientId);
+        $clientLink = 'http://billing.stadline.com/factures/'.$LMBrefclient[0]; // on met un lien pour acceder à lundiMatin à partir de Sugar
+        $query = array(array("name" =>"id","value" =>$sugarClientId),
+            array("name"=>"url_etat_client_lmb_c","value" =>$clientLink));
+
+        $this->getSugarClient()->setAccounts($query); // on fait la mise à jour sur sugar
+    }
+
+    public function extractAffairesFromSugar($numclients) {
+        $sugarClient = $this->getSugarClient();
+
+        $affaires = array();
+        $affaires['all'] = array();
+        $affaires['without_num'] = array();
+        $affaires['num'] = array();
+        $affaires['idLMB'] = array();
+        // Pour chaque compte de Sugar on récupere toutes ses affaires et on ne selectionne que celles qui ne sont pas perdue ou payée
+        foreach ($numclients as $clientId => $clientName)
+        {
+            $opportunities = $sugarClient->getOpportunities($clientId);
+
+            if (count($opportunities) > 0) {
+                foreach ($opportunities as $salesStage) {
+                    if ( $salesStage->getSalesStage() != self::SALE_STAGE_LOST && $salesStage->getSalesStage() != self::SALE_STAGE_WON) {
+                        $affaires['all'][] = $salesStage;
+                        $affaires['num'][] = $salesStage->getnumfact();
+
+                        if( $salesStage->getnumfact() == '')
+                        {
+                            //on selectionne les affaires qui n'ont pas encore de numero de facture
+                            $affaires['without_num'][] =  $salesStage;
+
+                            // on recupere les numeros de client Lundimatin du compte qui possède l'affaire si il existe.
+                            if ($salesStage->getidLMB() != "") {
+                                $affaires['idLMB'][] = $salesStage->getidLMB();
+                            }
+                            $this->output->writeln('> Affaire sans numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                        } else {
+                            $this->output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                        }
+                    }
+                }
+            }
+        }
+
+        $affaires['idLMB'] = array_values(array_unique($affaires['idLMB']));// on fait en sorte d'enlever les doublons et on supprime les index.
+
+        return $affaires;
+    }
+
+    private function getSugarClient() {
+        return $this->container->get('stadline_sugar_crm_client');
+    }
+
+    private function getCommandManager() {
+        return $this->container->get('stadline_tasks.ManagerCommand');
+    }
+
+    private function refDocEncrypt($refDoc) {
+        $salt = $this->container->getParameter('secret');
+        return $this->container->get('doctrine.orm.default_entity_manager')->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc[0],$salt,true);
+    }
 
 }
