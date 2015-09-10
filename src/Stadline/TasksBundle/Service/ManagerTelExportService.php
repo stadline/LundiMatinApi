@@ -33,7 +33,6 @@ class ManagerTelExportService
         $sugarClient = $this->container->get('stadline_sugar_crm_client');
         $contacts = $sugarClient->getContacts(null); // on prend tous les contacts
 
-
         return $contacts;
     }
 
@@ -43,40 +42,39 @@ class ManagerTelExportService
         $chemin = 'Sugar.csv';
         $delimiteur = ',';
 
-        $fichier_csv = fopen($chemin, 'w+');
-        fprintf($fichier_csv, chr(0xEF).chr(0xBB).chr(0xBF));
+        $csvFile = fopen($chemin, 'w+');
+        fprintf($csvFile, chr(0xEF).chr(0xBB).chr(0xBF));
         $header = array('group','surname','name','workPhone','workMobile','homePhone','homeMobile');
-        fputcsv($fichier_csv, $header, $delimiteur);
+        fputcsv($csvFile, $header, $delimiteur);
 
-        foreach($data as $lignes)
+        $row = array();
+        foreach($data as $contact)
         {
-
-            $WorkPhone = $lignes->getWorkPhone();
+            $WorkPhone = $contact->getWorkPhone();
             if(preg_match('#^([1-9][ ]?){9}$#',$WorkPhone)) //certain numero ne sont pas valides
             {
                 $WorkPhone = '0'.$WorkPhone;
             }
-            $WorkMobile = $lignes->getWorkMobile();
+            $WorkMobile = $contact->getWorkMobile();
             if(preg_match('#^([1-9][ ]?){9}$#',$WorkMobile)) //certain numero ne sont pas valides
             {
                 $WorkMobile = '0'.$WorkMobile;
             }
 
-            $ligne[0] = $lignes->getGroup();
-            $ligne[1] = $lignes->getFirstname();
-            $ligne[2] = $lignes->getLastname();
-            $ligne[3] = $WorkPhone;
-            $ligne[4] = $WorkMobile;
-            $ligne[5] = $lignes->gethomePhone();
-            $ligne[6] = $lignes->gethomeMobile();
+            $row[0] = $contact->getGroup();
+            $row[1] = $contact->getFirstname();
+            $row[2] = $contact->getLastname();
+            $row[3] = $WorkPhone;
+            $row[4] = $WorkMobile;
+            $row[5] = $contact->gethomePhone();
+            $row[6] = $contact->gethomeMobile();
 
-
-
-            fputcsv($fichier_csv, $ligne, $delimiteur);
-
-
+            // update csv with new line
+            fputcsv($csvFile, $row, $delimiteur);
         }
-        fclose($fichier_csv);
+
+        // close file
+        fclose($csvFile);
 
     }
 
