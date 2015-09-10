@@ -15,11 +15,11 @@
             <table id="tableFactures" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>R&eacute;f</th>
-                        <th>&Eacute;tat</th>
-                        <th>Date &eacute;mission</th>
+                        <th>Réf</th>
+                        <th>Etat</th>
+                        <th>Date Emission</th>
                         <th>Montant</th>
-                        <th>T&eacute;l&eacute;charger</th>
+                        <th>Télécharger</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,12 +40,12 @@
                                     {{  f.etat_doc }}
                                 {%  endif %}
                             </td>
-                            <td> {{ f.date_creation_doc }}</td>
+                            <td> {{ f.date_creation_doc|date("m/d/Y") }}</td>
                             <td style="text-align: right;">
                                 {% if f.__detail.montant_ttc is not defined %}
                                 {{ '-' }}
                                 {% else %}
-                                    {{ f.__detail.montant_ttc }}&euro;
+                                    {{ f.__detail.montant_ttc|number_format(2, '.', ' ') }}&euro;
                                 {% endif %}
                             </td>
 
@@ -55,9 +55,7 @@
                                     <i class="glyphicon glyphicon-download-alt"></i>
                                 </a>
                             </td>
-
                         </tr>
-
                     {% endfor %}
                 </tbody>
             </table>
