@@ -1,6 +1,7 @@
 services:
     stadline_front.soap_service:
-        class: Stadline\FrontBundle\Service\SoapService
+#        class: Stadline\LundiMatinClientBundle\Service\SoapService
+        class: %stadline_front.soap_service%
         arguments:
             - %api_url%
             - %api_ref_factures%

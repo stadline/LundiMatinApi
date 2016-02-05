@@ -32,7 +32,7 @@ class StructurePhaseCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('Stadline:structurephase')
+            ->setName('stadline:structurephase')
             ->setDescription('Mettre à jour les phases de ventes des affaires sur Sugar');
     }
 

@@ -32,7 +32,7 @@ class AssignFactureCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('Stadline:assignfacture')
+            ->setName('stadline:assignfacture')
             ->setDescription('Assigner les numeros de factures de LundiMatin aux affaires de Sugar');
 
     }

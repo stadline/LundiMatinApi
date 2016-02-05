@@ -28,7 +28,7 @@ class ManagerTelExportCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('Stadline:managertelexport')
+            ->setName('stadline:managertelexport')
             ->setDescription('');
     }
 

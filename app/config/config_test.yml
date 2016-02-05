@@ -1,6 +1,10 @@
 imports:
     - { resource: config_dev.yml }
 
+parameters:
+    stadline_sugar_crm.client.class: Stadline\SugarCRMBundle\Mock\SugarMock
+    stadline_front.soap_service: Stadline\LundiMatinClientBundle\Mock\SoapServiceMock
+
 framework:
     test: ~
     session:

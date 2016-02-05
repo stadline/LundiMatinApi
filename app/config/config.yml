@@ -3,6 +3,9 @@ imports:
     - { resource: security.yml }
     - { resource: services.yml }
 
+parameters:
+    stadline_sugar_crm.client.class: Stadline\SugarCRMBundle\Service\Client
+    stadline_front.soap_service: Stadline\LundiMatinClientBundle\Service\SoapService
 
 framework:
     #esi:             ~

@@ -10,6 +10,7 @@
 namespace Stadline\TasksBundle\Manager;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class InvoiceHandlerManager
 {
@@ -18,37 +19,26 @@ class InvoiceHandlerManager
     const DATE_INTERVALLE = '+90';
 
     private $container = null;
-    private $output = null;
 
-    public function executeAssignFactureCommand($container, $input, $output)
-    {
+    public function __construct($container) {
         $this->container = $container;
-        $this->output = $output;
+    }
 
-        // get sugar client
-        /** @var  Client */
-        $sugarClient = $this->getSugarClient();
-        $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
-
-        // get logs service
-        $date = date("Y-m-d H:i:s");
+    public function executeAssignFactureCommand($output)
+    {
+        // client pour lundiMatin
+        $client = $this->getLundiMatinClient();
         $ManagerCommand = $this->getCommandManager();
-
         $numclients = $this->getSugarClientNumber();
-
-        // test Kipsta
-        $numclients = array('1f030ea0-1523-fbcd-d979-542c1cfc8364' => 'Kipsta');
-
-        $affaires = $this->extractAffairesFromSugar($numclients);
+        $affaires = $this->extractAffairesFromSugar($output, $numclients);
+        $date = date("Y-m-d H:i:s");
 
         // si j'ai aucune affaire sans num de facture, je peux arréter le script
         if(empty($affaires['without_num'][0])) {
-            $this->output->writeln('> aucune mise à jour nécessaire');
+            $output->writeln('> aucune mise à jour nécessaire');
             exit;
         }
 
-        // client pour lundiMatin
-        $client = $container->get('stadline_front.soap_service');
         $montantfacture = array();
         foreach ($affaires['idLMB'] as $value)
         {
@@ -62,15 +52,15 @@ class InvoiceHandlerManager
                     // je vais chercher plus d'info sur cette facture pour avoir le montant
                     $data['details'] =  $client->getDocument($data['ref_doc']);
 
-                    // j'index un tableau par montant HT
+                   // j'index un tableau par montant HT
                     $ht = ($data['details']['montant_ttc'] - $data['details']['montant_tva']);
+
                     if(!isset($montantfacture[$ht])) {
                         $montantfacture[$ht] = array();
                     }
                     // on met la date en Datetime pour faire la diffrence des deux ensuite
                     $montantfacture[$ht][] = array("ref_doc" => $data['ref_doc'], "date_creation" => new \DateTime($data['date_creation_doc']));
-
-                    $this->output->writeln('> Facture inconnue sur Sugar trouvée : '.$data['ref_doc'].' pour le montant HT de '.$ht);
+                    $output->writeln('> Facture inconnue sur Sugar trouvée : '.$data['ref_doc'].' pour le montant HT de '.$ht);
                 }
             }
         }
@@ -87,67 +77,47 @@ class InvoiceHandlerManager
         // on associe les factures et affaires sans numero de facture en comparant leur montant , si ils sont pareils on selectionne la facture
         foreach($affaireSortedByAmount as $amount => $affaires)
         {
+            $message = null;
 
-            // on regarde si la facture est unique et si elle existe puis on compare la date
-            if(!empty($montantfacture[$amount]) && count($montantfacture[$amount])== 1 && count($affaires) == 1 && $affaires[0]["date_closed"]->diff($montantfacture[$amount][0]["date_creation"],true)->format('%R%a days') < self::DATE_INTERVALLE)
-            {
+            $assignFilters = array(
+                'AssignFilterOk',
+                'AssignFilterSomeFactureSameAmount',
+                'AssignFilterSomeAffairSameAmount',
+                'AssignFilterSomeAffaireSameAmountNoFacture',
+            );
 
+            foreach($assignFilters as $assignFilter) {
+                $assign = new AssignFacture(new $assignFilter());
+                if($assign instanceof ContainerAwareInterface) {
+                    $assign->setContainer($this->container);
+                }
 
-
-                $refDoc = $ManagerCommand->getpdf($montantfacture[$amount][0]["ref_doc"]);
-                $pdfLink = 'http://billing.stadline.com/facture/pdf/'.$refDoc; // on met un lien pour que le client puisse telecharger sa facture
-
-                $query = array(array("name" => "id", "value" => $affaires[0]["ref_sugar_id"]),
-                    array("name" => "num_lmb_fact_c", "value" => $montantfacture[$amount][0]["ref_doc"]),
-                    array("name" => "pdf_lmb_fact_c", "value" => $pdfLink));
-
-                $sugarClient->setOpportunities($query); // on fait la mise à jour sur sugar
-
-                $maj = 'mise à jour effectuée';
-                $alerte = 'aucune erreur';
-                unset($montantfacture[$amount]);
+                $assignMessage = $assign->executeAssignFactureMatch($montantfacture, $amount, $affaires);
+                if($assignMessage != null){
+                    $message = $assignMessage;
+                    break;
+                }
             }
 
-            elseif(!empty($montantfacture[$amount]) && count($montantfacture[$amount])> 1 )
-            {
-                $maj = 'pas de mise à jour';
-                $alerte = 'il existe plusieurs factures avec le même montant';
-            }
-
-            elseif( !empty($montantfacture[$amount]) && count($affaires) > 1)
-            {
-                $maj = 'pas de mise à jour';
-                $alerte = 'il existe plusieurs affaires avec le même montant';
-            }
-
-            elseif(empty($montantfacture[$amount]) && count($affaires) > 1)
-            {
-                $maj = 'pas de mise à jour';
-                $alerte = 'il existe plusieurs affaires avec le même montant et aucune facture ne correspond';
-            }
-            else
-            {
+            if($message == null){
                 $alerte = 'aucun montant ne correspond à cette affaire';
                 $maj = 'pas de mise à jour';
+                $message = array('alerte' => $alerte, 'maj' => $maj);
             }
 
-            $this->output->writeln('> '.$affaires[0]["name"].' : '.$alerte.' - '.$maj);
-            $ManagerCommand->createNewLogEntry($affaires[0]["name"], $date, $alerte, $maj); // on envoit les logs
+            $output->writeln('> '.$affaires[0]["name"].' : '.$message['alerte'].' - '.$message['maj']);
+            $ManagerCommand->createNewLogEntry($affaires[0]["name"], $date, $message['alerte'], $message['maj']); // on envoit les logs
         }
     }
 
-    public function executeStructurePhaseCommand($container, $input, $output)
+    public function executeStructurePhaseCommand($output)
     {
-        $this->container = $container;
-        $this->input = $input;
-        $this->output = $output;
-
         // get sugar client
         /** @var  Client */
-        $sugarClient = $container->get('stadline_sugar_crm_client');
+        $sugarClient = $this->getSugarClient();
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
         $date = date("Y-m-d H:i:s");
-        $ManagerCommand = $container->get('stadline_tasks.ManagerCommand');
+        $ManagerCommand = $this->getCommandManager();
 
         $numclients = array();
         $valeurtest = array();
@@ -162,24 +132,23 @@ class InvoiceHandlerManager
 
         $affaires = array();
         $factures = array();
-        $client = $container->get('stadline_front.soap_service');
+        $client = $this->getLundiMatinClient();
         // Pour chaque compte de Sugar on récupere toutes ses affaires et on ne selectionne que celles qui ne sont pas perdue ou payée
         foreach ($valeurtest as $clientId => $clientName) //
         {
-
             $opportunities = $sugarClient->getOpportunities($clientId);
 
             if (count($opportunities) > 0) {
                 foreach ($opportunities as $salesStage) {
 
                     if ( $salesStage->getSalesStage() != self::SALE_STAGE_LOST && $salesStage->getSalesStage() != self::SALE_STAGE_WON && $salesStage->getnumfact() != '') {
-                        $this->output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                        $output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
                         $affaires[] = $salesStage;
                         $ref = $salesStage->getnumfact();
                         $factures[] = $client->getFacturesByRef($ref);
                     }
                     else {
-                        $this->output->writeln('> Affaire sans numéro LM trouvée pour ' . $clientName . ' : ' . $salesStage->getname());
+                        $output->writeln('> Affaire sans numéro LM trouvée pour ' . $clientName . ' : ' . $salesStage->getname());
                     }
                 }
             }
@@ -194,73 +163,43 @@ class InvoiceHandlerManager
 
         // on compare le montant des affaires et des factures pour voir si il n'y a pas d'erreur
         foreach ($affaires as $index =>$data) {
-
             foreach($factures as $value)
             {
                 if( $value['details']['net_ht'] == $data->getamount() &&  $data->getClosedAt()->diff(new \DateTime($value[0]['date_creation_doc']),true)->format('%R%a days') < self::DATE_INTERVALLE) {
-                    switch($value[0]['etat_doc'])
-                    {
-                        case 17:
-                            if($data->getSalesStage() != 'Closed Lost')
-                            {
-                                $query = array( array("name" => "id", "value" => $data->getid()),
-                                    array("name" => "sales_stage", "value" =>'Closed Lost' ));
+                    $message = null;
 
-                                $sugarClient->setOpportunities($query);//on fait la mise à jour
+                    $structureFilters = array(
+                        'SalesStageAFacturer',
+                        'SalesStageClosedLost',
+                        'SalesStageFacture',
+                        'SalesStageClosedWon',
+                    );
 
-                                $maj = 'mise à jour effectuée';
-                                $erreur = 'aucune erreur';
-                            }
-                        case 18:
-                            if($data->getSalesStage() != 'facture')
-                            {
-                                $query = array( array("name" => "id", "value" => $data->getid()),
-                                    array("name" => "sales_stage", "value" =>'facture' ));
-                                $sugarClient->setOpportunities($query);//on fait la mise à jour
-
-                                $maj = 'mise à jour effectuée';
-                                $erreur = 'aucune erreur';
-                            }
-                        case 19:
-                            if($data->getSalesStage() != 'Closed Won')
-                            {
-                                $query = array( array("name" => "id", "value" => $data->getid()),
-                                    array("name" => "sales_stage", "value" =>'Closed Won'));
-                                $sugarClient->setOpportunities($query);//on fait la mise à jour
-
-                                $maj = 'mise à jour effectuée';
-                                $erreur = 'aucune erreur';
-                            }
-                        case 16:
-                            if($data->getSalesStage() != 'a_facturer')
-                            {
-                                $query = array( array("name" => "id", "value" => $data->getid()),
-                                    array("name" => "sales_stage", "value" =>'a_facturer' ));
-
-                                $sugarClient->setOpportunities($query);//on fait la mise à jour
-
-                                $maj = 'mise à jour effectuée';
-                                $erreur = 'aucune erreur';
-                            }
+                    foreach($structureFilters as $structureFilter) {
+                        $structure = new StructurePhase(new $structureFilter());
+                        $structureMessage = $structure->executeStructurePhaseMatch($value, $data, $sugarClient);
+                        if($structureMessage != null){
+                            $message = $structureMessage;
+                            break;
+                        }
                     }
-
+                    if($message == null){
+                        $erreur = 'erreur etat';
+                        $maj = 'pas de mise à jour';
+                        $message = array('erreur' => $erreur, 'maj' => $maj);
+                    }
                 }
-                else  // comparait les montants des affaires et des factures
-                {
+                else{
                     $erreur = 'erreur montant';
                     $maj = 'pas de mise à jour';
-
-
+                    $message = array('erreur' => $erreur, 'maj' => $maj);
                 }
-                $this->output->writeln('> '.$data->getname().' : '.$erreur.' - '.$maj);
-                $ManagerCommand->getValue($factures[$index][0]['ref_doc'],$date,$erreur,$maj);// on envoie les logs
 
+                $output->writeln('> '.$data->getname().' : '.$message['erreur'].' - '.$message['maj']);
+                $ManagerCommand->getValue($factures[$index][0]['ref_doc'],$date,$message['erreur'],$message['maj']);// on envoie les logs
             }
-
-
         }
     }
-
     /**
      * Return an array of the Sugar Client Number
      * @return array collection indexed by [sugarClientId] => ClientName
@@ -269,7 +208,6 @@ class InvoiceHandlerManager
         // get sugar client
         $sugarClient = $this->getSugarClient();
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
-
         $clients = array();
         // pour chaque compte client, je récupère l'id du compte pour ensuite aller chercher les affaires.
         foreach ($accounts as $value) {
@@ -301,7 +239,7 @@ class InvoiceHandlerManager
         $this->getSugarClient()->setAccounts($query); // on fait la mise à jour sur sugar
     }
 
-    public function extractAffairesFromSugar($numclients) {
+    public function extractAffairesFromSugar($output, $numclients) {
         $sugarClient = $this->getSugarClient();
 
         $affaires = array();
@@ -329,9 +267,9 @@ class InvoiceHandlerManager
                             if ($salesStage->getidLMB() != "") {
                                 $affaires['idLMB'][] = $salesStage->getidLMB();
                             }
-                            $this->output->writeln('> Affaire sans numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                            $output->writeln('> Affaire sans numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
                         } else {
-                            $this->output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                            $output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
                         }
                     }
                 }
@@ -343,15 +281,19 @@ class InvoiceHandlerManager
         return $affaires;
     }
 
-    private function getSugarClient() {
+    public function getSugarClient() {
         return $this->container->get('stadline_sugar_crm_client');
     }
 
-    private function getCommandManager() {
+    public function getLundiMatinClient() {
+        return $this->container->get('stadline_front.soap_service');
+    }
+
+    public function getCommandManager() {
         return $this->container->get('stadline_tasks.ManagerCommand');
     }
 
-    private function refDocEncrypt($refDoc) {
+    public function refDocEncrypt($refDoc) {
         $salt = $this->container->getParameter('secret');
         return $this->container->get('doctrine.orm.default_entity_manager')->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc[0],$salt,true);
     }

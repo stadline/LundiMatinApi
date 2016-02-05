@@ -25,10 +25,12 @@
         "hipaway-travel/mandrill-bundle": "^1.0",
         "hipaway-travel/mandrill-bundle": "dev-master"
 
-        
+
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3"
+        "sensio/generator-bundle": "~2.3",
+        "liip/functional-test-bundle": "^1.3",
+        "mockery/mockery": "^0.9.4"
     },
     "scripts": {
         "post-root-package-install": [

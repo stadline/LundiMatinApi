@@ -72,7 +72,6 @@ class DefaultController extends Controller
 
         foreach ($data as $value)
         {
-
             $Ref[] = $value->getRef();
             $date[] = $value->getDate();
             $erreur[] = $value->getErreur();
