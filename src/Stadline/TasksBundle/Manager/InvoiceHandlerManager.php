@@ -11,6 +11,11 @@ namespace Stadline\TasksBundle\Manager;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Stadline\TasksBundle\Manager\AssignFilterOk;
+use Stadline\TasksBundle\Manager\AssignFilterSomeAffairSameAmount;
+use Stadline\TasksBundle\Manager\AssignFilterSomeAffaireSameAmountNoFacture;
+use Stadline\TasksBundle\Manager\AssignFilterSomeFactureSameAmount;
+
 
 class InvoiceHandlerManager
 {
@@ -87,11 +92,12 @@ class InvoiceHandlerManager
             );
 
             foreach($assignFilters as $assignFilter) {
-                $assign = new AssignFacture(new $assignFilter());
-                if($assign instanceof ContainerAwareInterface) {
-                    $assign->setContainer($this->container);
+                $classPath = 'Stadline\\TasksBundle\\Manager\\'.$assignFilter;
+                $assignClass = new $classPath();
+                $assign = new AssignFacture($assignClass);
+                if($assignClass instanceof ContainerAwareInterface) {
+                    $assignClass->setContainer($this->container);
                 }
-
                 $assignMessage = $assign->executeAssignFactureMatch($montantfacture, $amount, $affaires);
                 if($assignMessage != null){
                     $message = $assignMessage;
@@ -176,7 +182,8 @@ class InvoiceHandlerManager
                     );
 
                     foreach($structureFilters as $structureFilter) {
-                        $structure = new StructurePhase(new $structureFilter());
+                        $classPath = 'Stadline\\TasksBundle\\Manager\\'.$structureFilter;
+                        $structure = new StructurePhase(new $classPath());
                         $structureMessage = $structure->executeStructurePhaseMatch($value, $data, $sugarClient);
                         if($structureMessage != null){
                             $message = $structureMessage;
