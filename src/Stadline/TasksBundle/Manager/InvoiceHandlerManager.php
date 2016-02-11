@@ -11,10 +11,6 @@ namespace Stadline\TasksBundle\Manager;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Stadline\TasksBundle\Manager\AssignFilterOk;
-use Stadline\TasksBundle\Manager\AssignFilterSomeAffairSameAmount;
-use Stadline\TasksBundle\Manager\AssignFilterSomeAffaireSameAmountNoFacture;
-use Stadline\TasksBundle\Manager\AssignFilterSomeFactureSameAmount;
 
 
 class InvoiceHandlerManager
@@ -24,6 +20,8 @@ class InvoiceHandlerManager
     const DATE_INTERVALLE = '+90';
 
     private $container = null;
+    private $assignFilters = array();
+    private $structureFilters = array();
 
     public function __construct($container) {
         $this->container = $container;
@@ -57,7 +55,7 @@ class InvoiceHandlerManager
                     // je vais chercher plus d'info sur cette facture pour avoir le montant
                     $data['details'] =  $client->getDocument($data['ref_doc']);
 
-                   // j'index un tableau par montant HT
+                    // j'index un tableau par montant HT
                     $ht = ($data['details']['montant_ttc'] - $data['details']['montant_tva']);
 
                     if(!isset($montantfacture[$ht])) {
@@ -84,19 +82,10 @@ class InvoiceHandlerManager
         {
             $message = null;
 
-            $assignFilters = array(
-                'AssignFilterOk',
-                'AssignFilterSomeFactureSameAmount',
-                'AssignFilterSomeAffairSameAmount',
-                'AssignFilterSomeAffaireSameAmountNoFacture',
-            );
-
-            foreach($assignFilters as $assignFilter) {
-                $classPath = 'Stadline\\TasksBundle\\Manager\\'.$assignFilter;
-                $assignClass = new $classPath();
-                $assign = new AssignFacture($assignClass);
-                if($assignClass instanceof ContainerAwareInterface) {
-                    $assignClass->setContainer($this->container);
+            foreach($this->assignFilters as $assignFilter) {
+                $assign = new AssignFacture($assignFilter);
+                if($assignFilter instanceof ContainerAwareInterface) {
+                    $assignFilter->setContainer($this->container);
                 }
                 $assignMessage = $assign->executeAssignFactureMatch($montantfacture, $amount, $affaires);
                 if($assignMessage != null){
@@ -104,7 +93,6 @@ class InvoiceHandlerManager
                     break;
                 }
             }
-
             if($message == null){
                 $alerte = 'aucun montant ne correspond à cette affaire';
                 $maj = 'pas de mise à jour';
@@ -165,25 +153,16 @@ class InvoiceHandlerManager
             $factures[$index]['details'] = $client->getDocument($value[0]['ref_doc']); //pour obtenir le montant de la facture
         }
 
-
-
         // on compare le montant des affaires et des factures pour voir si il n'y a pas d'erreur
         foreach ($affaires as $index =>$data) {
             foreach($factures as $value)
             {
-                if( $value['details']['net_ht'] == $data->getamount() &&  $data->getClosedAt()->diff(new \DateTime($value[0]['date_creation_doc']),true)->format('%R%a days') < self::DATE_INTERVALLE) {
+                if ($value['details']['net_ht'] == $data->getamount() &&  $data->getClosedAt()->diff(new \DateTime($value[0]['date_creation_doc']),true)->format('%R%a days') < self::DATE_INTERVALLE) {
                     $message = null;
 
-                    $structureFilters = array(
-                        'SalesStageAFacturer',
-                        'SalesStageClosedLost',
-                        'SalesStageFacture',
-                        'SalesStageClosedWon',
-                    );
 
-                    foreach($structureFilters as $structureFilter) {
-                        $classPath = 'Stadline\\TasksBundle\\Manager\\'.$structureFilter;
-                        $structure = new StructurePhase(new $classPath());
+                    foreach($this->structureFilters as $structureFilter) {
+                        $structure = new StructurePhase(new $structureFilter());
                         $structureMessage = $structure->executeStructurePhaseMatch($value, $data, $sugarClient);
                         if($structureMessage != null){
                             $message = $structureMessage;
@@ -207,6 +186,7 @@ class InvoiceHandlerManager
             }
         }
     }
+
     /**
      * Return an array of the Sugar Client Number
      * @return array collection indexed by [sugarClientId] => ClientName
@@ -305,4 +285,11 @@ class InvoiceHandlerManager
         return $this->container->get('doctrine.orm.default_entity_manager')->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc[0],$salt,true);
     }
 
+    public function addAssignFilter(AssignFactureMatchInterface $filter) {
+        $this->assignFilters[] = $filter;
+    }
+
+    public function addStructurePhaseFilter(StructurePhaseMatchInterface $phase) {
+        $this->structureFilters[] = $phase;
+    }
 }

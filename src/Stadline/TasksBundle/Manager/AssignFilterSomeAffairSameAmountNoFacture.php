@@ -9,7 +9,7 @@
 namespace Stadline\TasksBundle\Manager;
 
 
-class AssignFilterSomeAffaireSameAmountNoFacture implements AssignFactureMatchInterface {
+class AssignFilterSomeAffairSameAmountNoFacture implements AssignFactureMatchInterface {
 
     public function assignFilter($montantfacture, $amount, $affaires)
     {

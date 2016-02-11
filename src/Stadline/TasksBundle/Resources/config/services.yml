@@ -18,3 +18,47 @@ services:
     stadline_tasks.ManagerCommand:
         class: Stadline\TasksBundle\Service\ManagerCommandService
         arguments: ["@service_container","@doctrine.orm.entity_manager"]
+
+    stadline_task.assign_facture:
+        class: Stadline\TasksBundle\Manager\InvoiceHandlerManager
+        arguments: ["@service_container"]
+
+    stadline_task.assign_filter_ok:
+        class: Stadline\TasksBundle\Manager\AssignFilterOk
+        tags:
+            - { name: stadline_task.filter }
+
+    stadline_task.assign_filter_some_affair_same_amount_no_facture:
+        class: Stadline\TasksBundle\Manager\AssignFilterSomeAffairSameAmountNoFacture
+        tags:
+            - { name: stadline_task.filter }
+
+    stadline_task.assign_filter_some_facture_same_amount:
+        class: Stadline\TasksBundle\Manager\AssignFilterSomeFactureSameAmount
+        tags:
+            - { name: stadline_task.filter }
+
+    stadline_task.assign_filter_some_affair_same_amount:
+        class: Stadline\TasksBundle\Manager\AssignFilterSomeAffairSameAmount
+        tags:
+            - { name: stadline_task.filter }
+
+    stadline_task.sales_stage_a_facturer:
+        class: Stadline\TasksBundle\Manager\SalesStageAFacturer
+        tags:
+            - { name: stadline_task.sales_stage }
+
+    stadline_task.sales_stage_closed_lost:
+        class: Stadline\TasksBundle\Manager\SalesStageClosedLost
+        tags:
+            - { name: stadline_task.sales_stage }
+
+    stadline_task.sales_stage_closed_won:
+        class: Stadline\TasksBundle\Manager\SalesStageClosedWon
+        tags:
+            - { name: stadline_task.sales_stage }
+
+    stadline_task.sales_stage_facture:
+        class: Stadline\TasksBundle\Manager\SalesStageFacture
+        tags:
+            - { name: stadline_task.sales_stage }

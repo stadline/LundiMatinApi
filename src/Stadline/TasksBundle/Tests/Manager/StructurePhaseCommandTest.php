@@ -71,7 +71,8 @@ class StructurePhaseCommandTest extends WebTestCase {
         $opportunity1->setnumfact('BLC-00004');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
+
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Affaire avec numéro LM trouvée pour Test Lundi Matin : Test Lundi Matin')->once()->andReturn(true);
         $output->shouldReceive('writeln')->with('> Test Lundi Matin : aucune erreur - mise à jour cas 16 effectuée')->once()->andReturn(true);
@@ -101,7 +102,8 @@ class StructurePhaseCommandTest extends WebTestCase {
         $opportunity1->setnumfact('BLC-00150');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
+
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Affaire avec numéro LM trouvée pour Test Lundi Matin : Test Lundi Matin')->once()->andReturn(true);
         $output->shouldReceive('writeln')->with('> Test Lundi Matin : aucune erreur - mise à jour cas 17 effectuée')->once()->andReturn(true);
@@ -131,7 +133,8 @@ class StructurePhaseCommandTest extends WebTestCase {
         $opportunity1->setnumfact('BLC-00170');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
+
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Affaire avec numéro LM trouvée pour Test Lundi Matin : Test Lundi Matin')->once()->andReturn(true);
         $output->shouldReceive('writeln')->with('> Test Lundi Matin : aucune erreur - mise à jour cas 18 effectuée')->once()->andReturn(true);
@@ -161,7 +164,8 @@ class StructurePhaseCommandTest extends WebTestCase {
         $opportunity1->setnumfact('BLC-00180');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
+
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Affaire avec numéro LM trouvée pour Test Lundi Matin : Test Lundi Matin')->once()->andReturn(true);
         $output->shouldReceive('writeln')->with('> Test Lundi Matin : aucune erreur - mise à jour cas 19 effectuée')->once()->andReturn(true);

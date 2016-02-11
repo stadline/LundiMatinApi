@@ -46,8 +46,8 @@ class StructurePhaseCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $manager = new InvoiceHandlerManager();
-        $manager->executeStructurePhaseCommand($container, $input, $output);
+        $manager = new InvoiceHandlerManager($container);
+        $manager->executeStructurePhaseCommand($output);
     }
 
 }

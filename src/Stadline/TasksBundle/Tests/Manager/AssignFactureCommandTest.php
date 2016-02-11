@@ -41,7 +41,7 @@ class AssignFactureCommandTest extends WebTestCase {
         $opportunity1->setnumfact('');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
 
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Facture inconnue sur Sugar trouvée : BLC-00180 pour le montant HT de 100')->once()->andReturn(true);
@@ -73,7 +73,7 @@ class AssignFactureCommandTest extends WebTestCase {
         $opportunity1->setnumfact('');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
 
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Facture inconnue sur Sugar trouvée : BLC-00150 pour le montant HT de 100')->once()->andReturn(true);
@@ -121,7 +121,7 @@ class AssignFactureCommandTest extends WebTestCase {
         $opportunity2->setnumfact('');
         $sugarMock->addOpportunity($opportunity2);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
 
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Facture inconnue sur Sugar trouvée : BLC-00150 pour le montant HT de 100')->once()->andReturn(true);
@@ -170,7 +170,7 @@ class AssignFactureCommandTest extends WebTestCase {
         $opportunity2->setnumfact('');
         $sugarMock->addOpportunity($opportunity2);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
 
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Affaire sans numéro LM trouvée pour Test Lundi Matin : Test same montant 1')->once()->andReturn(true);
@@ -203,7 +203,7 @@ class AssignFactureCommandTest extends WebTestCase {
         $opportunity1->setnumfact('');
         $sugarMock->addOpportunity($opportunity1);
 
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
 
         $output = $this->getOutputMock();
         $output->shouldReceive('writeln')->with('> Facture inconnue sur Sugar trouvée : BLC-00170 pour le montant HT de 150')->once()->andReturn(true);

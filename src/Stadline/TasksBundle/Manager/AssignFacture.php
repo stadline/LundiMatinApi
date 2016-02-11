@@ -20,4 +20,4 @@ class AssignFacture {
     public function executeAssignFactureMatch($montantfacture, $amount, $affaires) {
         return $this->assignFacture->assignFilter($montantfacture, $amount, $affaires);
     }
-} 
+}
