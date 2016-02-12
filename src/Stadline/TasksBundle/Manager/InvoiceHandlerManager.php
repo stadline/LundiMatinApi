@@ -32,7 +32,11 @@ class InvoiceHandlerManager
         // client pour lundiMatin
         $client = $this->getLundiMatinClient();
         $ManagerCommand = $this->getCommandManager();
-        $numclients = $this->getSugarClientNumber();
+//        $numclients = $this->getSugarClientNumber();
+
+        // test Kipsta
+        $numclients = array('1f030ea0-1523-fbcd-d979-542c1cfc8364' => 'Kipsta');
+
         $affaires = $this->extractAffairesFromSugar($output, $numclients);
         $date = date("Y-m-d H:i:s");
 
@@ -119,6 +123,7 @@ class InvoiceHandlerManager
         foreach ($accounts as $value) {
             $numclients[$value->getid()] = $value->getname();//on recupere tout les id des comptes clients de Sugar
 
+            // Test Lundi Matin
             if($value->getname() == "Test Lundi Matin") {
                 $valeurtest[$value->getid()] = $value->getname();
             }
@@ -159,7 +164,6 @@ class InvoiceHandlerManager
             {
                 if ($value['details']['net_ht'] == $data->getamount() &&  $data->getClosedAt()->diff(new \DateTime($value[0]['date_creation_doc']),true)->format('%R%a days') < self::DATE_INTERVALLE) {
                     $message = null;
-
 
                     foreach($this->structureFilters as $structureFilter) {
                         $structure = new StructurePhase(new $structureFilter());
