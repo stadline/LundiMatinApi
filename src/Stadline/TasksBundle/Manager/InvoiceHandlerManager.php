@@ -32,10 +32,7 @@ class InvoiceHandlerManager
         // client pour lundiMatin
         $client = $this->getLundiMatinClient();
         $ManagerCommand = $this->getCommandManager();
-//        $numclients = $this->getSugarClientNumber();
-
-        // test Kipsta
-        $numclients = array('1f030ea0-1523-fbcd-d979-542c1cfc8364' => 'Kipsta');
+        $numclients = $this->getSugarClientNumber();
 
         $affaires = $this->extractAffairesFromSugar($output, $numclients);
         $date = date("Y-m-d H:i:s");
@@ -47,6 +44,7 @@ class InvoiceHandlerManager
         }
 
         $montantfacture = array();
+
         foreach ($affaires['idLMB'] as $value)
         {
             // on prend les factures du compte qui a au moins une facture sans numéro sur sugar
@@ -114,6 +112,7 @@ class InvoiceHandlerManager
         /** @var  Client */
         $sugarClient = $this->getSugarClient();
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
+
         $date = date("Y-m-d H:i:s");
         $ManagerCommand = $this->getCommandManager();
 
@@ -122,18 +121,13 @@ class InvoiceHandlerManager
         // pour chaque compte client, je récupère l'id du compte pour ensuite aller chercher les affaires.
         foreach ($accounts as $value) {
             $numclients[$value->getid()] = $value->getname();//on recupere tout les id des comptes clients de Sugar
-
-            // Test Lundi Matin
-            if($value->getname() == "Test Lundi Matin") {
-                $valeurtest[$value->getid()] = $value->getname();
-            }
         }
 
         $affaires = array();
         $factures = array();
         $client = $this->getLundiMatinClient();
         // Pour chaque compte de Sugar on récupere toutes ses affaires et on ne selectionne que celles qui ne sont pas perdue ou payée
-        foreach ($valeurtest as $clientId => $clientName) //
+        foreach ($numclients as $clientId => $clientName) //
         {
             $opportunities = $sugarClient->getOpportunities($clientId);
 
@@ -245,23 +239,21 @@ class InvoiceHandlerManager
 
             if (count($opportunities) > 0) {
                 foreach ($opportunities as $salesStage) {
-                    if ( $salesStage->getSalesStage() != self::SALE_STAGE_LOST && $salesStage->getSalesStage() != self::SALE_STAGE_WON) {
-                        $affaires['all'][] = $salesStage;
-                        $affaires['num'][] = $salesStage->getnumfact();
+                    $affaires['all'][] = $salesStage;
+                    $affaires['num'][] = $salesStage->getnumfact();
+                    if( $salesStage->getnumfact() == '')
+                    {
+                        //on selectionne les affaires qui n'ont pas encore de numero de facture
+                        $affaires['without_num'][] =  $salesStage;
 
-                        if( $salesStage->getnumfact() == '')
-                        {
-                            //on selectionne les affaires qui n'ont pas encore de numero de facture
-                            $affaires['without_num'][] =  $salesStage;
-
-                            // on recupere les numeros de client Lundimatin du compte qui possède l'affaire si il existe.
-                            if ($salesStage->getidLMB() != "") {
-                                $affaires['idLMB'][] = $salesStage->getidLMB();
-                            }
-                            $output->writeln('> Affaire sans numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
-                        } else {
-                            $output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                        // on recupere les numeros de client Lundimatin du compte qui possède l'affaire si il existe.
+                        if ($salesStage->getidLMB() != "") {
+                            $affaires['idLMB'][] = $salesStage->getidLMB();
                         }
+                        $output->writeln('> Affaire sans numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
+                    }
+                    else {
+                        $output->writeln('> Affaire avec numéro LM trouvée pour '.$clientName.' : '.$salesStage->getname());
                     }
                 }
             }

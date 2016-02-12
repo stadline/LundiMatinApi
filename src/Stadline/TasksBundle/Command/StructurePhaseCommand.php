@@ -46,7 +46,7 @@ class StructurePhaseCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $manager = new InvoiceHandlerManager($container);
+        $manager = $container->get("stadline_task.assign_facture");
         $manager->executeStructurePhaseCommand($output);
     }
 
