@@ -80,11 +80,6 @@ class ManagerCommandService
         $entities = $this->em
             ->getRepository($entity)
             ->findAll();
-        if (!$entities) {
-            throw $this->createNotFoundException(
-                'Aucun produit trouvé'
-            );
-        }
 
         return $entities;
 

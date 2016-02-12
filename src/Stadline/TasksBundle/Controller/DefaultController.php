@@ -15,10 +15,14 @@ class DefaultController extends Controller
     public function PageLogAction()
     {
         $client = $this->get('stadline_tasks.ManagerCommand');
-        $data = $client->getAlldata('StadlineTasksBundle:Logger');
+        $datas = $client->getAlldata('StadlineTasksBundle:Logger');
 
+        $RefAffaire = array();
+        $date = array();
+        $erreur = array();
+        $maj = array();
 
-        foreach ($data as $data)
+        foreach ($datas as $data)
         {
             $RefAffaire[] = $data->getRefAffaire();
             $date[] = $data->getDate();
@@ -39,10 +43,14 @@ class DefaultController extends Controller
     public  function PageLogErrorAction()
     {
         $client = $this->get('stadline_tasks.ManagerCommand');
-        $data = $client->getAlldata('StadlineTasksBundle:Logger');
+        $datas = $client->getAlldata('StadlineTasksBundle:Logger');
 
+        $RefAffaire = array();
+        $date = array();
+        $erreur = array();
+        $maj = array();
 
-        foreach ($data as $data)
+        foreach ($datas as $data)
         {
             if($data->getErreur() == 'erreur montant' )
             {
@@ -53,7 +61,6 @@ class DefaultController extends Controller
             }
 
         }
-
 
         return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
             'RefAffaire' => $RefAffaire,
