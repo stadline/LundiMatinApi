@@ -173,11 +173,6 @@ class InvoiceHandlerManager
                         $message = array('erreur' => $erreur, 'maj' => $maj);
                     }
                 }
-                else{
-                    $erreur = 'erreur montant';
-                    $maj = 'pas de mise à jour';
-                    $message = array('erreur' => $erreur, 'maj' => $maj);
-                }
 
                 $output->writeln('> '.$data->getname().' : '.$message['erreur'].' - '.$message['maj']);
                 $ManagerCommand->getValue($factures[$index][0]['ref_doc'],$date,$message['erreur'],$message['maj']);// on envoie les logs
