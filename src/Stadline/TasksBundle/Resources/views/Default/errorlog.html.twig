@@ -1,8 +1,8 @@
 {% extends 'StadlineFrontBundle::layout.html.twig' %}
 
-{% block title %}Stadline - Log AssignFacture{% endblock %}
+{% block title %}Stadline - Log StructurePhase{% endblock %}
 
-{% block header_title %}Listing Logs AssignFacture{% endblock %}
+{% block header_title %}Listing Logs StructurePhase{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -18,12 +18,14 @@
                 </thead>
                 <tbody>
                 {% for data in datas %}
-                    <tr>
-                        <td> {{ data.date }}</td>
-                        <td> {{ data.ref }}</td>
-                        <td> {{ data.erreur }}</td>
-                        <td> {{ data.maj }}</td>
-                    </tr>
+                    {%  if data.erreur == "erreur montant" %}
+                        <tr>
+                            <td> {{ data.date }}</td>
+                            <td> {{ data.refAffaire }}</td>
+                            <td> {{ data.erreur }}</td>
+                            <td> {{ data.maj }}</td>
+                        </tr>
+                    {% endif %}
                 {%  endfor %}
                 </tbody>
             </table>

@@ -7,11 +7,6 @@
 {% block content %}
     <div class="row">
         <div class="col-lg-12">
-
-
-
-
-
             <table id="tableFactures" class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -22,17 +17,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% set compt = -1 %}
-                {% for d in date %}
-                    {% set compt = compt + 1 %}
+                {% for data in datas %}
                     <tr>
-                        <td>{{ d }}</td>
-                        <td>{{ RefAffaire[compt] }}</td>
-                        <td>{{ erreur[compt] }}</td>
-                        <td style="text-align: right;">{{ maj[compt] }}</td>
+                        <td> {{ data.date }}</td>
+                        <td> {{ data.refAffaire }}</td>
+                        <td> {{ data.erreur }}</td>
+                        <td> {{ data.maj }}</td>
                     </tr>
-
-                {% endfor %}
+                {%  endfor %}
                 </tbody>
             </table>
         </div>

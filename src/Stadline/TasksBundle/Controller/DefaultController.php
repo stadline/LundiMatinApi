@@ -17,25 +17,8 @@ class DefaultController extends Controller
         $client = $this->get('stadline_tasks.ManagerCommand');
         $datas = $client->getAlldata('StadlineTasksBundle:Logger');
 
-        $RefAffaire = array();
-        $date = array();
-        $erreur = array();
-        $maj = array();
-
-        foreach ($datas as $data)
-        {
-            $RefAffaire[] = $data->getRefAffaire();
-            $date[] = $data->getDate();
-            $erreur[] = $data->getErreur();
-            $maj[] = $data->getMaj();
-        }
-
-
         return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
-            'RefAffaire' => $RefAffaire,
-            'date' => $date,
-            'erreur' => $erreur,
-            'maj' => $maj
+           'datas' => $datas
         ));
     }
 
@@ -45,52 +28,20 @@ class DefaultController extends Controller
         $client = $this->get('stadline_tasks.ManagerCommand');
         $datas = $client->getAlldata('StadlineTasksBundle:Logger');
 
-        $RefAffaire = array();
-        $date = array();
-        $erreur = array();
-        $maj = array();
-
-        foreach ($datas as $data)
-        {
-            if($data->getErreur() == 'erreur montant' )
-            {
-                $RefAffaire[] = $data->getRefAffaire();
-                $date[] = $data->getDate();
-                $erreur[] = $data->getErreur();
-                $maj[] = $data->getMaj();
-            }
-
-        }
-
-        return $this->render('StadlineTasksBundle:Default:index.html.twig', array(
-            'RefAffaire' => $RefAffaire,
-            'date' => $date,
-            'erreur' => $erreur,
-            'maj' => $maj
+        return $this->render('StadlineTasksBundle:Default:errorlog.html.twig', array(
+            'datas' => $datas
         ));
-
     }
 
 
     public function assignfactureAction()
     {
         $client = $this->get('stadline_tasks.ManagerCommand');
-        $data = $client->getAlldata('StadlineTasksBundle:AssignfactureLog');
-
-        foreach ($data as $value)
-        {
-            $Ref[] = $value->getRef();
-            $date[] = $value->getDate();
-            $erreur[] = $value->getErreur();
-            $maj[] = $value->getMaj();
-        }
-
+        $datas = $client->getAlldata('StadlineTasksBundle:AssignfactureLog');
 
         return $this->render('StadlineTasksBundle:Default:assignefacturelog.html.twig', array(
-            'Ref' => $Ref,
-            'date' => $date,
-            'erreur' => $erreur,
-            'maj' => $maj));
+            'datas' => $datas
+        ));
     }
 
 }
