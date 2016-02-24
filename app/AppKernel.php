@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Hip\MandrillBundle\HipMandrillBundle(),
             new Stadline\LundiMatinClientBundle\LundiMatinClientBundle(),
             new Stadline\PublicConnectorBundle\StadlinePublicConnectorBundle(),
+            new Stadline\ZendeskBundle\StadlineZendeskBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

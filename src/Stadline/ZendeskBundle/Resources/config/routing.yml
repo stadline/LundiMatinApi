@@ -1,0 +1,3 @@
+stadline_zendesk_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: StadlineZendeskBundle:Default:index }

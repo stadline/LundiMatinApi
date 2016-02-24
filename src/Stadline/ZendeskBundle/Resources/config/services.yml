@@ -1,0 +1,11 @@
+parameters:
+    stadline_zendesk.client.class: Zendesk\API\Client
+
+services:
+    stadline_zendesk_client:
+        class: %stadline_zendesk.client.class%
+        arguments:
+            - %api_zendesk.config.domain%
+            - %api_zendesk.config.username%
+        calls:
+            - [ setAuth,     [ "token", %api_zendesk.config.token% ] ]
