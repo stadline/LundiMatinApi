@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Hip\MandrillBundle\HipMandrillBundle(),
             new Stadline\LundiMatinClientBundle\LundiMatinClientBundle(),
+            new Stadline\PublicConnectorBundle\StadlinePublicConnectorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

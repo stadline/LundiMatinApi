@@ -1,0 +1,4 @@
+services:
+#    stadline_public_connector.example:
+#        class: Stadline\PublicConnectorBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
