@@ -29,3 +29,8 @@ parameters:
     stadline_sugar_crm.base_url: #
     stadline_sugar_crm.username:    #
     stadline_sugar_crm.password: #
+
+    #Zendesk
+    stadline_zendesk.domain: extraclub
+    stadline_zendesk.username: fabien.rondeau@stadline.com
+    stadline_zendesk.token: hE2eZmroWOSNuvi8vdPKeYij1AfKhwA6TW9ZdaJO

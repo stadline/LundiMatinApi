@@ -2,7 +2,7 @@
 
 namespace Stadline\ZendeskBundle\Service;
 
-use Zendesk\API\Client as BaseClient;
+use Zendesk\API\HttpClient as BaseClient;
 
 class Client extends BaseClient
 {

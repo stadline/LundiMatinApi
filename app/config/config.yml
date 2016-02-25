@@ -82,6 +82,11 @@ stadline_sugar_crm:
     username: %stadline_sugar_crm.username%
     password: %stadline_sugar_crm.password%
 
+#Zendesk
+stadline_zendesk:
+    domain: %stadline_zendesk.domain%
+    username: %stadline_zendesk.username%
+    token: %stadline_zendesk.token%
 
 #mandrill
 hip_mandrill:
