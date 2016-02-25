@@ -35,6 +35,20 @@ class Contact
      */
     private $hashedRef;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sugar_account_id", type="string", nullable=true)
+     */
+    private $sugarAccountId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="zendesk_organization_id", type="integer", nullable=true)
+     */
+    private $zendeskOrganizationId;
+
 
     /**
      * Get id
@@ -90,5 +104,53 @@ class Contact
     public function getHashedRef()
     {
         return $this->hashedRef;
+    }
+
+    /**
+     * Set SugarCRM Account ID
+     *
+     * @param string $sugarAccountId
+     *
+     * @return Contact
+     */
+    public function setSugarAccountId($sugarAccountId)
+    {
+        $this->sugarAccountId = $sugarAccountId;
+
+        return $this;
+    }
+
+    /**
+     * Get sugarCRM Account ID
+     *
+     * @return string
+     */
+    public function getSugarAccountId()
+    {
+        return $this->sugarAccountId;
+    }
+
+    /**
+     * Set Zendesk Organization ID
+     *
+     * @param string $zendeskId
+     *
+     * @return Contact
+     */
+    public function setZendeskOrganizationId($zendeskId)
+    {
+        $this->zendeskOrganizationId = $zendeskId;
+
+        return $this;
+    }
+
+    /**
+     * Get Zendesk Organization ID
+     *
+     * @return string
+     */
+    public function getZendeskOrganizationId()
+    {
+        return $this->zendeskOrganizationId;
     }
 }
