@@ -47,8 +47,8 @@ class DefaultController extends Controller
                 $displayfactures[$index] = $factures[$index];
                 $salt = $this->container->getParameter('secret');
                 $refDoc = $factures[$index]["ref_doc"];
-                var_dump($factures[$index]["ref_doc"]);
-                var_dump($factures[$index]["ref_doc"]);
+//                var_dump($factures[$index]["ref_doc"]);
+//                var_dump($factures[$index]["ref_doc"]);
                 $refDocEncrypt[$index] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
             }
         }

@@ -19,7 +19,7 @@
                         <th>Etat</th>
                         <th>Date Emission</th>
                         <th>Montant</th>
-                        <th>Télécharger</th>
+                        {#<th>Télécharger</th>#}
                     </tr>
                 </thead>
                 <tbody>
@@ -50,11 +50,11 @@
                             </td>
 
 
-                            <td>
-                                <a href="{{url("stadline_front_facture_pdf", { "refDocEncrypt" : refDocEncrypt[compt] })}}" class="btn btn-info btn-small">
-                                    <i class="glyphicon glyphicon-download-alt"></i>
-                                </a>
-                            </td>
+                            {#<td>#}
+                                {#<a href="{{url("stadline_front_facture_pdf", { "refDocEncrypt" : refDocEncrypt[compt] })}}" class="btn btn-info btn-small">#}
+                                    {#<i class="glyphicon glyphicon-download-alt"></i>#}
+                                {#</a>#}
+                            {#</td>#}
                         </tr>
                     {% endfor %}
                 </tbody>

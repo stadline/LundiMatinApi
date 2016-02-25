@@ -1,3 +1,7 @@
+stadline_front_contact:
+    resource: "@StadlineFrontBundle/Resources/config/routing/contact.yml"
+    prefix:   /contact
+
 stadline_front_facture_pdf:
     path:     /facture/pdf/{refDocEncrypt}
     defaults: { _controller: StadlineFrontBundle:Default:pdf }
