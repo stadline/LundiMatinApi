@@ -1,3 +1,3 @@
 stadline_public_connector_widget:
-    path:     /widget/{clientId}/links
+    path:     /widget/{hash}/links
     defaults: { _controller: StadlinePublicConnectorBundle:Default:widget }
