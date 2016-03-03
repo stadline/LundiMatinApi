@@ -18,8 +18,14 @@ class DefaultController extends Controller
 //        $auth = $zendeskClient->getAuth();
 //        var_dump($auth);
 //        die();
+//
+//        $test = curl_init("https://extraclub.zendesk.com/api/v2/tickets.json -u amandine.fournier@stadline.com/token:yhxWNYL0XQW8Vo5JQOaZBpdJJMkbcwcNdxN5yYmQ");
+//        $exec = curl_exec($test);
+//        var_dump($exec);
+//        die();
 
         $em = $this->get('doctrine.orm.entity_manager');
+
         $contact = $em
             ->getRepository("StadlineFrontBundle:Contact")
             ->findOneByHashedRef($hash)
@@ -36,3 +42,4 @@ class DefaultController extends Controller
         ));
     }
 }
+

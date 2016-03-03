@@ -97,7 +97,6 @@ class SoapService extends ContainerAwareCommand
     {
         $allInvoices = $this->getALLFactures();
 
-        
         $collection = new \Doctrine\Common\Collections\ArrayCollection($allInvoices);
 
         $collection = $collection->filter(function ($elm) use ($refClient) {
