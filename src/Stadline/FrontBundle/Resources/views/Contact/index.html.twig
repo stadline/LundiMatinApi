@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <table class="table table-bordered table-striped">
+        <table id="tableFactures" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>Ref</th>
@@ -41,4 +41,15 @@
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/stadlinefront/lib/jquery/jquery.datatable.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/stadlinefront/js/factures.js') }}"></script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/stadlinefront/lib/jquery/jquery.datatable.min.css') }}" />
 {% endblock %}
