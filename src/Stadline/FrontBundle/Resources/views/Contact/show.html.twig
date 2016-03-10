@@ -1,44 +1,40 @@
-{% extends '::base.html.twig' %}
+{% extends 'StadlineFrontBundle::layout.html.twig' %}
 
-{% block body -%}
-    <h1>Contact</h1>
+{% block title %}Stadline - Show Contact{% endblock %}
 
-    <table class="record_properties">
-        <tbody>
+{% block header_title %}Show Contact{% endblock %}
+
+{% block content %}
+
+    <div id="back">
+        <a href="{{ path('contact') }}"> Back to the list </a>
+    </div>
+
+    <div id="show">
+        <table class="record_properties">
+            <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Ref</th>
+                <th class="th_show">Ref</th>
                 <td>{{ entity.ref }}</td>
             </tr>
             <tr>
-                <th>Hashedref</th>
+                <th class="th_show">Hashedref</th>
                 <td>{{ entity.hashedRef }}</td>
             </tr>
             <tr>
-                <th>Sugaraccountid</th>
+                <th class="th_show">Sugaraccountid</th>
                 <td>{{ entity.sugarAccountId }}</td>
             </tr>
             <tr>
-                <th>Zendeskorganizationid</th>
+                <th class="th_show">Zendeskorganizationid</th>
                 <td>{{ entity.zendeskOrganizationId }}</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('contact') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('contact_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+    <div id="action_show">
+        <a href="{{ path('contact_edit', { 'id': entity.id }) }}"><button id="form_edit" class="btn-default btn"> Edit </button></a>
+        {{ form(delete_form) }}
+    </div>
 {% endblock %}

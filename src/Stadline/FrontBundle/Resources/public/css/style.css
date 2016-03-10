@@ -17,10 +17,19 @@ div#back {
     margin-top : 20px;
 }
 
-div#formEdit {
+div#formEdit, div#show {
     margin-top: 40px;
 }
 
-#form_submit {
+button#form_submit, button#form_edit{
     width: 72px;
+    float: left;
+}
+
+div#show {
+    margin-bottom: 35px;
+}
+
+.th_show {
+    width: 220px;
 }

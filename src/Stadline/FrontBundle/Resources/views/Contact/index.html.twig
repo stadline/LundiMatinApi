@@ -4,41 +4,41 @@
 
 {% block header_title %}Listing Contacts{% endblock %}
 
-{% block content%}
+{% block content %}
 
 <div class="row">
     <div class="col-lg-12">
         <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Ref</th>
-                <th>Hashedref</th>
-                <th>Sugaraccountid</th>
-                <th>Zendeskorganizationid</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('contact_show', { 'id': entity.id }) }}">{{ entity.ref }}</a></td>
-                <td>{{ entity.hashedRef }}</td>
-                <td>{{ entity.sugarAccountId }}</td>
-                <td>{{ entity.zendeskOrganizationId }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('contact_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('contact_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            <thead>
+                <tr>
+                    <th>Ref</th>
+                    <th>Hashedref</th>
+                    <th>Sugaraccountid</th>
+                    <th>Zendeskorganizationid</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>{{ entity.ref }}</td>
+                    <td>{{ entity.hashedRef }}</td>
+                    <td>{{ entity.sugarAccountId }}</td>
+                    <td>{{ entity.zendeskOrganizationId }}</td>
+                    <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('contact_show', { 'id': entity.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('contact_edit', { 'id': entity.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
