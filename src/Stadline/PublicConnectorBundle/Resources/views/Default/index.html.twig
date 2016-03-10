@@ -1,74 +1,23 @@
 {% extends 'StadlineFrontBundle::layout.html.twig' %}
 
-{#{% block content %}#}
-    {#&#123;&#35;<a href="https://extraclub.zendesk.com/oauth/authorizations/new?response_type=code&redirect_uri=http://lundimatin.local/app_dev.php/widget/1/links&client_id=hE2eZmroWOSNuvi8vdPKeYij1AfKhwA6TW9ZdaJO&scope=read">Lien Zendesk</a>&#35;&#125;#}
-    {#<br/>#}
-    {#<a href="http://lundimatin.local/app_dev.php/factures/{{ hash_ref }}">Lien Sugar</a>#}
-    {#<p id="text"></p>#}
-    {#<p id="response" style="display: none;"><span style="float: left; margin-right: 10px;">Response:</span><textarea id="response_area" style="width: 500px; height:200px;"></textarea></p>#}
-
-    {#<form action="https://{{ zendesk_domain }}.zendesk.com/api/v2/ticket.json -u -v amandine.fournier@stadline.com/token:yhxWNYL0XQW8Vo5JQOaZBpdJJMkbcwcNdxN5yYmQ" id="authorize" method="GET">#}
-        {#&#123;&#35;<input type="hidden" name="email" value="amandine.fournier@stadline.com/token:yhxWNYL0XQW8Vo5JQOaZBpdJJMkbcwcNdxN5yYmQ" />&#35;&#125;#}
-        {#<input type="submit" value="Authorize!" />#}
-    {#</form>#}
-{#{% endblock content %}#}
-
-{#yhxWNYL0XQW8Vo5JQOaZBpdJJMkbcwcNdxN5yYmQ#}
-
 {% block content %}
-    <a href="http://lundimatin.local/app_dev.php/factures/{{ hash_ref }}">Go To Sugar</a>
-    <p id="text"></p>
-    <p id="response" style="display: none;"><span style="float: left; margin-right: 10px;">Response:</span><textarea id="response_area" style="width: 500px; height:200px;"></textarea></p>
+    <div id="factures">
+        <a href="http://lundimatin.local/app_dev.php/factures/{{ hash_ref }}">Voir mes factures</a>
+    </div>
+    <div>
+        <a href="https://{{ zendesk_domain }}.zendesk.com/hc/fr/requests">Voir mes demandes</a>
+    </div>
+    {#<p id="text"></p>#}
+    {#<p id="response" style="display:none;"><span style="float: left; margin-right: 10px;">Response:</span><textarea id="response_area" style="width: 500px; height:200px;"></textarea></p>#}
 
-    <form action=" https://{{ zendesk_domain }}.zendesk.com/oauth/authorizations/new" id="authorize" method="GET">
-        <input type="hidden" name="client_id" value="extraclub" />
-        <input type="hidden" name="response_type" value="token" />
-        <input type="hidden" name="redirect_uri" value="https://{{ zendesk_domain }}.zendesk.com/hc/fr/requests" />
-        <input type="hidden" name="scope" value="read write" />
+    {#<form action="https://{{ zendesk_domain }}.zendesk.com/oauth/authorizations/new" id="authorize" method="GET">#}
+        {#<input type="hidden" name="client_id" value="extraclub" />#}
+        {#<input type="hidden" name="response_type" value="token" />#}
+        {#<input type="hidden" name="redirect_uri" value="https://{{ zendesk_domain }}.zendesk.com/hc/fr/requests" />#}
+        {#&#123;&#35;<input type="hidden" name="redirect_uri" value="http://127.0.0.1:8000/widget/bea43888d3/links" />&#35;&#125;#}
+        {#<input type="hidden" name="scope" value="read write" />#}
 
-        <input type="submit" value="Go To Zendesk" />
-    </form>
+        {#<input type="submit" value="Voir mes demandes" />#}
+    {#</form>#}
 {% endblock content %}
 
-{% block javascript %}
-    <script type="text/javascript">
-        function getHashParameter(name) {
-            return decodeURIComponent((new RegExp('[#|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.hash)||[,""])[1].replace(/\+/g, '%20'))||null;
-        }
-
-        $(document).ready(function() {
-            var error = getHashParameter("error");
-            var token = getHashParameter("access_token");
-
-            if(error) {
-                $("#text").html(getHashParameter("error_description"));
-                $("#authorize").show();
-            } else if(token) {
-                $("#text").html("Received token: " + token + ". Initiating OAuth ticket request.");
-
-                //Make the call to the v2 API with your token in the header
-                $.ajax('https://{{ zendesk_domain }}.zendesk.com/api/v2/tickets.json', {
-                    method: 'GET',
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " +token);
-                    }
-                }).success(function(data, textStatus, xhr) {
-                    $("#response_area").html(JSON.stringify(data));
-                    $("#response").show()
-                }).error(function(xhr, textStatus, errorThrown) {
-                    console.log(xhr);
-                    console.log(textStatus);
-                    console.log(errorThrown);
-
-                    $("#response_area").html("An error occured, check the console.");
-                    $("#response").show()
-                }).complete(function() {
-                    $("#authorize").show();
-                });
-
-            } else {
-                $("#authorize").show();
-            }
-        }
-    </script>
-{% endblock javascript %}

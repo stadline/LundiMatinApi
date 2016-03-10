@@ -12,3 +12,15 @@ div.header * {
 div.header h1 {
     margin-left: 30px;
 }
+
+div#back {
+    margin-top : 20px;
+}
+
+div#formEdit {
+    margin-top: 40px;
+}
+
+#form_submit {
+    width: 72px;
+}
