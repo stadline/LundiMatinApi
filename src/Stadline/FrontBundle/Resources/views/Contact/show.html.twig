@@ -7,34 +7,32 @@
 {% block content %}
 
     <div id="back">
-        <a href="{{ path('contact') }}"> Back to the list </a>
+        <a href="{{ path('contact') }}"> Back to the contact list </a>
     </div>
 
-    <div id="show">
-        <table class="record_properties">
-            <tbody>
-            <tr>
-                <th class="th_show">Ref</th>
-                <td>{{ entity.ref }}</td>
-            </tr>
-            <tr>
-                <th class="th_show">Name</th>
-                <td>{{ entity.name }}</td>
-            </tr>
-            <tr>
-                <th class="th_show">Hashedref</th>
-                <td>{{ entity.hashedRef }}</td>
-            </tr>
-            <tr>
-                <th class="th_show">Sugaraccountid</th>
-                <td>{{ entity.sugarAccountId }}</td>
-            </tr>
-            <tr>
-                <th class="th_show">Zendeskorganizationid</th>
-                <td>{{ entity.zendeskOrganizationId }}</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="row">
+        <div class="col-lg-12 margin-top">
+            <table id="tableFactures" class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Ref</th>
+                    <th>Name</th>
+                    <th>Hashed Ref</th>
+                    <th>Sugar Account ID</th>
+                    <th>Zendesk ID</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ entity.ref }}</td>
+                        <td>{{ entity.name }}</td>
+                        <td>{{ entity.hashedRef }}</td>
+                        <td>{{ entity.sugarAccountId }}</td>
+                        <td>{{ entity.zendeskOrganizationId }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div id="action_show">

@@ -42,3 +42,7 @@ div.flash-notice {
 .text-center {
     text-align: center;
 }
+
+div.margin-top {
+    margin-top: 30px;
+}
