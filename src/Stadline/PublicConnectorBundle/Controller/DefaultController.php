@@ -21,18 +21,15 @@ class DefaultController extends Controller
 
         $clientTickets = array();
         if(!is_null($clientZendeskId)) {
-            $url = "https://extraclub.zendesk.com/api/v2/users/".$clientZendeskId."/tickets/requested.json";
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_USERPWD, 'amandine.fournier@stadline.com:fOUrnIEr88');
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $tickets = curl_exec($curl);
+            /* Guzzle */
+            $client = new Client('https://extraclub.zendesk.com');
+            $client->setDefaultOption('auth', array('amandine.fournier@stadline.com', 'fOUrnIEr88', 'Basic'));
+            $request = $client->get('/api/v2/users/'.$clientZendeskId.'/tickets/requested.json');
+            $response = $request->send();
 
-            $ticketsArray = json_decode($tickets);
-            curl_close($curl);
-
-            foreach ($ticketsArray->{'tickets'} as $ticketArray){
-                if($ticketArray->{'requester_id'} == $clientZendeskId){
+            $ticketsArray = $response->json();
+            foreach ($ticketsArray['tickets'] as $ticketArray){
+                if($ticketArray['requester_id'] == $clientZendeskId){
                     $clientTickets[] = $ticketArray;
                 }
             }
