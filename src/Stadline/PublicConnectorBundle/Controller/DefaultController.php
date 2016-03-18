@@ -9,50 +9,48 @@ class DefaultController extends Controller
 {
     public function widgetAction($hash)
     {
-//        $zendeskClient = $this->get('stadline_zendesk_client');
-
-        /* Zendesk get auth */
-//        $auth = $zendeskClient->getAuthorization(array("response_type" => "code", "redirect_uri" => "http://lundimatin.local/app_dev.php/widget/1/links", "client_id" => $clientId, "scope" => "read write"))->getObjectResponse();
-//        var_dump($auth);
-//        die();
-
-//        $auth = $zendeskClient->getAuth();
-//        var_dump($auth);
-//        die();
-
-        $em = $this->get('doctrine.orm.entity_manager');
-
-        $contact = $em
-            ->getRepository("StadlineFrontBundle:Contact")
-            ->findOneByHashedRef($hash)
-        ;
+        $zendeskClient = $this->get('stadline_zendesk_client');
+        $contact =  $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->findOneByHashedRef($hash);
 
         $clientLmbId = null;
-        if($contact != null){
+        $clientZendeskId = null;
+        if(!is_null($contact)){
             $clientLmbId = $contact->getRef();
+            $clientZendeskId = $contact->getZendeskOrganizationId();
         }
 
-
-        /* Test Guzzle */
-        $client = new Client();
-        $request = $client->get('https://extraclub.zendesk.com/oauth/authorizations/new');
-        $query = $request->getQuery();
-        $query->add("client_id","extraclub");
-        $query->add("response_type","code");
-        $query->add("redirect_uri","https://extraclub.zendesk.com/hc/fr/requests");
-        $query->add("scope","read write");
-
-        $client2 = new Client();
-        $request2 = $client2->get('https://extraclub.zendesk.com/api/v2/tickets.json', array("Authorization" => "Bearer ac4432ba2f8bfca69f956ba988a3d03b69696cb44d04e963e73c9cc7de8db91a"), array());
-
-        $response = $request2->send();
-
-//        var_dump($response);
-//        die();
+        $clientTickets = array();
+        if(is_null($clientZendeskId)) {
+            die('no Zendesk Id');
+        } else {
+            $tickets = $zendeskClient->tickets()->findAll();
+            foreach ($tickets->{'tickets'} as $ticket){
+                if($ticket->{'requester_id'} == $clientZendeskId){
+                    $clientTickets[] = $ticket;
+                }
+            }
+//
+//            $url = "https://extraclub.zendesk.com/api/v2/users/".$clientZendeskId."/tickets/requested.json";
+//            $curl = curl_init();
+//            curl_setopt($curl, CURLOPT_URL, $url);
+//            curl_setopt($curl, CURLOPT_USERPWD, 'amandine.fournier@stadline.com:fOUrnIEr88');
+//            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//            $tickets = curl_exec($curl);
+//
+//            $ticketsArray = json_decode($tickets);
+//            curl_close($curl);
+//
+//            foreach ($ticketsArray->{'tickets'} as $ticketArray){
+//                if($ticketArray->{'requester_id'} == $clientZendeskId){
+//                    $clientTickets[] = $ticketArray;
+//                }
+//            }
+        }
 
         return $this->render('StadlinePublicConnectorBundle:Default:index.html.twig', array(
             'client_lmb_id' => $clientLmbId,
-            'hash_ref' => $hash
+            'hash_ref' => $hash,
+            'clientTickets' => $clientTickets
         ));
     }
 }

@@ -133,7 +133,7 @@ class Contact
     /**
      * Set Zendesk Organization ID
      *
-     * @param string $zendeskId
+     * @param integer $zendeskId
      *
      * @return Contact
      */
@@ -147,7 +147,7 @@ class Contact
     /**
      * Get Zendesk Organization ID
      *
-     * @return string
+     * @return integer
      */
     public function getZendeskOrganizationId()
     {

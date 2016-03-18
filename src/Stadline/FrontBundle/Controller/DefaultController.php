@@ -13,11 +13,36 @@ class DefaultController extends Controller
     public function hashAction($refContact)
     {
         $salt = $this->container->getParameter('secret');
-        $hashedRef = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->encrypt($refContact, $salt, true);
+        $em = $this->getDoctrine()->getManager();
+        $contactRepository = $em->getRepository('StadlineFrontBundle:Contact');
+
+        $hashedRef = $contactRepository->encrypt($refContact, $salt, true);
         if ($hashedRef === false) {
             throw new AuthenticationException('Could not find User');
         }
 
+        $sugarClient = $this->get('stadline_sugar_crm_client');
+        $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
+
+        $sugarId = null;
+        foreach ($accounts as $account) {
+            if($account->getName() == "Ocea"){
+                $sugarId = $account->getId();
+            }
+        }
+
+        if(!is_null($sugarId)){
+            $contact = $contactRepository->findOneBy(array('ref' => $refContact));
+            $contact->setSugarAccountId($sugarId);
+
+            $em->persist($contact);
+            $em->flush();
+        } else {
+            $this->addFlash(
+                'warning',
+                'Warning : No client found for this name.'
+            );
+        }
 
         return $this->redirect($this->generateUrl('stadline_front_factures', array(
             'hashedRef' => $hashedRef

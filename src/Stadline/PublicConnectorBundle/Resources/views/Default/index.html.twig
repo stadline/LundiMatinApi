@@ -7,17 +7,33 @@
     <div>
         <a href="https://{{ zendesk_domain }}.zendesk.com/hc/fr/requests">Voir mes demandes</a>
     </div>
-    {#<p id="text"></p>#}
-    {#<p id="response" style="display:none;"><span style="float: left; margin-right: 10px;">Response:</span><textarea id="response_area" style="width: 500px; height:200px;"></textarea></p>#}
+    <div>
+        <h2> Vos Tickets :</h2>
 
-    {#<form action="https://{{ zendesk_domain }}.zendesk.com/oauth/authorizations/new" id="authorize" method="GET">#}
-        {#<input type="hidden" name="client_id" value="extraclub" />#}
-        {#<input type="hidden" name="response_type" value="token" />#}
-        {#<input type="hidden" name="redirect_uri" value="https://{{ zendesk_domain }}.zendesk.com/hc/fr/requests" />#}
-        {#&#123;&#35;<input type="hidden" name="redirect_uri" value="http://127.0.0.1:8000/widget/bea43888d3/links" />&#35;&#125;#}
-        {#<input type="hidden" name="scope" value="read write" />#}
-
-        {#<input type="submit" value="Voir mes demandes" />#}
-    {#</form>#}
+        <div class="row">
+            <div class="col-lg-12">
+                <table id="tableFactures" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sujet</th>
+                        <th>Status</th>
+                        <th>Echanges</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for clientTicket in clientTickets %}
+                        <tr>
+                            <td><a href="https://{{ zendesk_domain }}.zendesk.com/hc/fr/requests/{{ clientTicket.id  }}">{{ clientTicket.id }}</a></td>
+                            <td>{{ clientTicket.subject }}</td>
+                            <td>{{ clientTicket.status }}</td>
+                            <td>{{ clientTicket.description }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
 
