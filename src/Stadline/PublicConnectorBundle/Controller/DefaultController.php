@@ -9,7 +9,6 @@ class DefaultController extends Controller
 {
     public function widgetAction($hash)
     {
-        $zendeskClient = $this->get('stadline_zendesk_client');
         $contact =  $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:Contact')->findOneByHashedRef($hash);
 
         $clientLmbId = null;

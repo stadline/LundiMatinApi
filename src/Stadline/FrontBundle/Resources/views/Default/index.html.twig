@@ -26,13 +26,11 @@
                         <th>Etat</th>
                         <th>Date Emission</th>
                         <th>Montant</th>
-                        {#<th>Télécharger</th>#}
+                        <th>Télécharger</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% set compt = -1 %}
-                    {% for f in factures %}
-                        {% set compt = compt + 1 %}
+                    {% for key,f in factures %}
                         <tr>
                             <td>{{ f.ref_doc }}</td>
                             <td>{% if f.etat_doc == 19 %}
@@ -55,13 +53,11 @@
                                     {{ f.__detail.montant_ttc|number_format(2, '.', ' ') }}&euro;
                                 {% endif %}
                             </td>
-
-
-                            {#<td>#}
-                                {#<a href="{{url("stadline_front_facture_pdf", { "refDocEncrypt" : refDocEncrypt[compt] })}}" class="btn btn-info btn-small">#}
-                                    {#<i class="glyphicon glyphicon-download-alt"></i>#}
-                                {#</a>#}
-                            {#</td>#}
+                            <td>
+                                <a href="{{url("stadline_front_facture_pdf", { "refDocEncrypt" : refDocEncrypt[key] })}}" class="btn btn-info btn-small">
+                                    <i class="glyphicon glyphicon-download-alt"></i>
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
