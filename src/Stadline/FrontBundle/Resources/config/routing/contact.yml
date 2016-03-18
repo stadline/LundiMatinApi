@@ -6,10 +6,6 @@ contact_show:
     path:     /{id}/show
     defaults: { _controller: "StadlineFrontBundle:Contact:show" }
 
-contact_new:
-    path:     /new
-    defaults: { _controller: "StadlineFrontBundle:Contact:new" }
-
 contact_create:
     path:     /create
     defaults: { _controller: "StadlineFrontBundle:Contact:create" }

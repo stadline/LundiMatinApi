@@ -16,6 +16,7 @@ class ContactType extends AbstractType
     {
         $builder
             ->add('ref')
+            ->add('name')
             ->add('hashedRef')
             ->add('sugarAccountId')
             ->add('zendeskOrganizationId')

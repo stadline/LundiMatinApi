@@ -29,29 +29,6 @@ class ContactController extends Controller
             'entities' => $entities,
         ));
     }
-    /**
-     * Creates a new Contact entity.
-     *
-     */
-    public function createAction(Request $request)
-    {
-        $entity = new Contact();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('contact_show', array('id' => $entity->getId())));
-        }
-
-        return $this->render('StadlineFrontBundle:Contact:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        ));
-    }
 
     /**
      * Creates a form to create a Contact entity.

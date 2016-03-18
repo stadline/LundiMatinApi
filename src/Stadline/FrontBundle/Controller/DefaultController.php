@@ -25,15 +25,18 @@ class DefaultController extends Controller
         $accounts = $sugarClient->getAccounts("accounts.account_type = 'Customer'");
 
         $sugarId = null;
+        $sugarName = null;
         foreach ($accounts as $account) {
             if($account->getName() == "Ocea"){
                 $sugarId = $account->getId();
+                $sugarName = $account->getName();
             }
         }
 
         if(!is_null($sugarId)){
             $contact = $contactRepository->findOneBy(array('ref' => $refContact));
             $contact->setSugarAccountId($sugarId);
+            $contact->setName($sugarName);
 
             $em->persist($contact);
             $em->flush();
