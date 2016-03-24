@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20160225141726 extends AbstractMigration
+class Version20160324103752 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -18,8 +18,8 @@ class Version20160225141726 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE Contact (id INT AUTO_INCREMENT NOT NULL, ref VARCHAR(255) NOT NULL, $hashedRef VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
-        $this->addSql('ALTER TABLE Contact ADD sugar_account_id VARCHAR(255) DEFAULT NULL, ADD zendesk_organization_id INT DEFAULT NULL');
+        $this->addSql('CREATE TABLE refDoc (id INT AUTO_INCREMENT NOT NULL, refDoc VARCHAR(255) NOT NULL, refDocEncrypt VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE Contact ADD name VARCHAR(255) DEFAULT NULL, CHANGE $hashedref hashedRef VARCHAR(255) NOT NULL');
     }
 
     /**
@@ -30,6 +30,7 @@ class Version20160225141726 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE Contact DROP sugar_account_id, DROP zendesk_organization_id');
+        $this->addSql('DROP TABLE refDoc');
+        $this->addSql('ALTER TABLE Contact DROP name, CHANGE hashedref $hashedRef VARCHAR(255) NOT NULL COLLATE utf8_unicode_ci');
     }
 }
