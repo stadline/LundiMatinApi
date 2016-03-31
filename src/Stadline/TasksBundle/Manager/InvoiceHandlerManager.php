@@ -193,13 +193,13 @@ class InvoiceHandlerManager
         foreach ($accounts as $value) {
             $clients[$value->getid()] = $value->getname(); //on recupere tout les id des comptes clients de Sugar
 
+
             // update only for Lundi Matin right now
             if($value->getname() == 'Test Lundi Matin')
             {
 //                $this->updateBillingLinkOnSugar($value->getid(), $value->getidLMB());
             }
         }
-
         return $clients;
     }
 

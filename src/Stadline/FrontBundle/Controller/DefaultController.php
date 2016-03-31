@@ -63,11 +63,9 @@ class DefaultController extends Controller
         $soapService = $this->getSoapService();
         $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
 
-
-
-
         $displayfactures = [];
         $refDocEncrypt = [];
+        $nomContact = "";
         foreach ($factures as $index => $facture) {
             $nomContact = $facture["nom_contact"];
             $factures[$index]['__detail'] = $soapService->getDocument($facture['ref_doc']);
@@ -75,8 +73,6 @@ class DefaultController extends Controller
                 $displayfactures[$index] = $factures[$index];
                 $salt = $this->container->getParameter('secret');
                 $refDoc = $factures[$index]["ref_doc"];
-//                var_dump($factures[$index]["ref_doc"]);
-//                var_dump($factures[$index]["ref_doc"]);
                 $refDocEncrypt[$index] = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->encryptDoc($refDoc,$salt,true);
             }
         }
@@ -91,7 +87,6 @@ class DefaultController extends Controller
 
     public function pdfAction($refDocEncrypt)
     {
-
         $refDoc = $this->getDoctrine()->getManager()->getRepository('StadlineFrontBundle:refDoc')->decryptDoc($refDocEncrypt);
         
         $soapService = $this->getSoapService();
@@ -100,8 +95,8 @@ class DefaultController extends Controller
         $nonbinaire = base64_decode($binaire);
 
         $filename = $refDoc;
-//           file_put_contents($filename,$nonbinaire);
-// Generate response
+        // file_put_contents($filename,$nonbinaire);
+        // Generate response
         $response = new Response();
 
         // Set headers
@@ -110,7 +105,7 @@ class DefaultController extends Controller
         $response->headers->set('Content-Disposition', 'attachment; filename="' . basename($filename) . '";');
 
 
-// Send headers before outputting anything
+        // Send headers before outputting anything
         $response->sendHeaders();
 
         $response->setContent($nonbinaire);
@@ -135,6 +130,7 @@ class DefaultController extends Controller
         $soapService = $this->getSoapService();
         $factures = $soapService->getFacturesByRefClient($ref); // 'C-000000-00033'
         $displayfactures = [];
+        $nomContact = "";
         foreach ($factures as $index => $facture) {
             $factures[$index]['__detail'] = $soapService->getDocument($facture['ref_doc']);
             $nomContact = $facture["nom_contact"];
